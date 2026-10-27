@@ -40,277 +40,133 @@ require "enviarCorreo.php";
 
 $con = new Conexion(array(
   "tipo"       => "mysql",
-  "servidor"   => "185.232.14.52",
-  "bd"         => "u760464709_dam_refu4a_bd",
-  "usuario"    => "u760464709_dam_refu4a_usr",
-  "contrasena" => "p[hy+n=V5#q"
+  "servidor"   => "localhost",
+  "bd"         => "armario_digital",
+  "usuario"    => "root",
+  "contrasena" => ""
 ));
 
+session_start();
 
-
-
-
-if(isset($_GET["iniciarSesion"])){
-
-  $select = $con->select("usuarios", "id" );
-  $select->where("usuario", "=",$_POST["usuario"]);
-  $select->where_and("contrasena", "=",$_POST["contrasena"]);
-
-  if(count($select->execute())){
-    echo "correcto";
-  }
-  else{
-      echo "error";
-    }
-
+// Responde siempre en JSON y termina la ejecución.
+function responder($ok, $mensaje = "", $extra = array()) {
+  header("Content-Type: application/json; charset=utf-8");
+  echo json_encode(array_merge(array("ok" => $ok, "mensaje" => $mensaje), $extra));
+  exit;
 }
-
-elseif (isset($_GET["padrinos"])) { 
-    $select = $con->select("padrinos", "*");
-    $select->orderby("idPadrino DESC");
-    $select->limit(10);
-
-    header('Content-Type: application/json');
-    echo json_encode($select->execute());
-}
-elseif (isset($_GET["eliminarPadrino"])){
-  $delete = $con->delete("padrinos");
-  $delete->where("idPadrino", "=", $_POST["idPadrino"]);
-  if ($delete->execute()){
-    echo "correcto";
+ 
+ 
+// ------------------------------------------------------
+// REGISTRO
+// ------------------------------------------------------
+if (isset($_GET["registrarUsuario"])) {
+ 
+  $nombre   = trim($_POST["usuario"] ?? "");
+  $correo   = strtolower(trim($_POST["correo"] ?? ""));
+  $password = $_POST["password"] ?? "";
+ 
+  // Validaciones (el servidor nunca debe confiar solo en el navegador)
+  if (strlen($nombre) < 3 || strlen($nombre) > 30) {
+    responder(false, "El usuario debe tener entre 3 y 30 caracteres.");
   }
-  else{
-    echo "error";
-  }  
-  
-}
-elseif (isset($_GET["agregarPadrinos"])){
-  $nombrePadrino = $_POST["nombrePadrino"]; 
-  $sexo = $_POST["sexo"];
-  $telefono = $_POST["telefono"];
-  $correoElectronico = $_POST["correoElectronico"];
-
-  $insert = $con->insert("padrinos", "nombrePadrino, sexo, telefono, correoElectronico");
-  $insert->value("$nombrePadrino");
-  $insert->value("$sexo");
-  $insert->value("$telefono");
-  $insert->value("$correoElectronico");
-  $insert->execute();
-
-  $idPadrino = $con ->lastInsertId();
-
-  if (is_numeric($idPadrino)){
-    echo $idPadrino;
+  if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+    responder(false, "Escribe un correo válido.");
   }
-  else{
-    echo "0";
+  if (strlen($password) < 8) {
+    responder(false, "La contraseña debe tener al menos 8 caracteres.");
   }
  
-}
-elseif (isset($_GET["modificarPadrinos"])){
-  $idPadrino = $_POST["idPadrino"];
-  $nombrePadrino = $_POST["nombrePadrino"]; 
-  $sexo = $_POST["sexo"];
-  $telefono = $_POST["telefono"];
-  $correoElectronico = $_POST["correoElectronico"];
-
-  $update = $con->update("padrinos");
-  $update->set("nombrePadrino", $nombrePadrino);
-  $update->set("sexo", $sexo);
-  $update->set("telefono", $telefono);
-  $update->set("correoElectronico", $correoElectronico);
-  $update->where("idPadrino", "=", $idPadrino); 
-
-  if ($update->execute()){
-   echo $idPadrino; 
-    } else {
-        echo "0";
-    }
-}
-elseif (isset($_GET["mascotas"])) {
-    $select = $con->select("mascotas", "*");
-    $select->orderby("idMascota DESC");
-    $select->limit(10);
-    header("Content-Type: application/json");
-    echo json_encode($select->execute());
-
-
-
-}
-elseif (isset($_GET["agregarMascota"])) {
-
-  $insert = $con->insert(
-    "mascotas",
-    "nombre, tipo_mascota, sexo, raza, peso, condiciones"
-  );
-
-  $insert->value($_POST["nombre"]);
-  $insert->value($_POST["tipo_mascota"]);
-  $insert->value($_POST["sexo"]);
-  $insert->value($_POST["raza"]);
-  $insert->value($_POST["peso"]);
-  $insert->value($_POST["condiciones"]);
-  $insert->execute();
-
-  $id = $con->lastInsertId();
-
-  if (is_numeric($id)) {
-    echo $id;
-  } else {
-    echo "0";
-  }
-}
-elseif (isset($_GET["modificarMascota"])) {
-
-  $update = $con->update("mascotas");
-
-  $update->set("nombre", $_POST["nombre"]);
-  $update->set("tipo_mascota", $_POST["tipo_mascota"]);
-  $update->set("sexo", $_POST["sexo"]);
-  $update->set("raza", $_POST["raza"]);
-  $update->set("peso", $_POST["peso"]);
-  $update->set("condiciones", $_POST["condiciones"]);
-
-  $update->where("idMascota", "=", $_POST["idMascota"]);
-
-  if ($update->execute()) {
-    echo $_POST["idMascota"]; 
-  } else {
-    echo "0";
-  }
-}
-elseif (isset($_GET["eliminarMascota"])) {
-
-  $delete = $con->delete("mascotas");
-  $delete->where("idMascota", "=", $_POST["idMascota"]);
-
-  if ($delete->execute()) {
-    echo "correcto";
-  } else {
-    echo "error";
-  }
-}
-elseif (isset($_GET["apoyo"])) {
-  $select = $con->select("apoyos", "apoyos.idApoyo AS idApoyo, apoyos.idMascota AS idMascota, mascotas.nombre AS nombreMascota, apoyos.idPadrino AS idPadrino, padrinos.nombrePadrino AS nombrePadrino, monto, causa");
-  $select->innerjoin("mascotas USING(idMascota)");
-  $select->innerjoin("padrinos USING(idPadrino)");
-  $select->orderby("apoyos.idApoyo DESC");
-  $select->limit(10);
-
-  header("Content-Type: application/json");
-  echo json_encode($select->execute());
-}
-elseif (isset($_GET["opcionMascota"])) {
-  $select = $con->select("mascotas", "idMascota AS value, nombre AS label");
-  $select->orderby("nombre ASC");
-  $select->limit(10);
-
-  header("Content-Type: application/json");
-  echo json_encode($select->execute());
-}
-elseif (isset($_GET["opcionPadrino"])) {
-  $select = $con->select("padrinos", "idPadrino AS value, nombrePadrino AS label");
-  $select->orderby("nombrePadrino ASC");
-  $select->limit(10);
-
-  header("Content-Type: application/json");
-  echo json_encode($select->execute());
-}
-elseif (isset($_GET["eliminarApoyo"])) {
-  $delete = $con->delete("apoyos");
-  $delete->where("idApoyo", "=", $_POST['idApoyo']);
-  if ($delete->execute()){
-    echo "correcto"; 
- }
- else{
-  echo "error";
- }
-}
-elseif (isset($_GET["agregarApoyo"])) {
-  $insert = $con->insert("apoyos", "idMascota, idPadrino, monto, causa");
-  $insert->value($_POST["mascota"]);
-  $insert->value($_POST["padrino"]);
-  $insert->value($_POST["monto"]);
-  $insert->value($_POST["causa"]);
-  $insert->execute();
-
-  $idApoyo = $con->lastInsertId();
-
-  if (is_numeric($idApoyo)){
-    echo $idApoyo; 
- }
- else{
-  echo "0";
- }
-}
-elseif (isset($_GET["modificarApoyo"])) {
-  $update = $con->update("apoyos");
-  $update->set("idMascota",$_POST["mascota"]);
-  $update->set("idPadrino",$_POST["padrino"]);
-  $update->set("monto", $_POST["monto"]);
-  $update->set("causa",$_POST["causa"]);
-  $update->where("idApoyo", "=", $_POST["idApoyo"]);
-
-  if ($update->execute()){
-    echo "correcto"; 
- }
- else{
-  echo "error";
- }
-}
-elseif (isset($_GET["usuarios"])) { 
-    $select = $con->select("usuarios", "*");
-    $select->orderby("id DESC");
-    $select->limit(10);
-
-    header('Content-Type: application/json');
-    echo json_encode($select->execute());
-}
-elseif (isset($_GET["eliminarUsuario"])){
-  $delete = $con->delete("usuarios");
-  $delete->where("id", "=", $_POST["id"]);
-  if ($delete->execute()){
-    echo "correcto";
-  }
-  else{
-    echo "error";
-  }  
-  
-}
-elseif (isset($_GET["modificarUsuario"])){
-  $id = $_POST["id"];
-  $usuario = $_POST["usuario"]; 
-  $contrasena = $_POST["contrasena"];
-
-  $update = $con->update("usuarios");
-  $update->set("usuario", $usuario);
-  $update->set("contrasena", $contrasena);
-  $update->where("id", "=", $id); 
-
-  if ($update->execute()){
-   echo $id; 
-    } else {
-        echo "0";
-    }
-}
-elseif (isset($_GET["agregarUsuario"])){
-  $usuario = $_POST["usuario"]; 
-  $contrasena = $_POST["contrasena"];
-
-  $insert = $con->insert("usuarios", "usuario, contrasena");
-  $insert->value("$usuario");
-  $insert->value("$contrasena");
-  $insert->execute();
-
-  $id = $con ->lastInsertId();
-
-  if (is_numeric($id)){
-    echo $id;
-  }
-  else{
-    echo "0";
+  // ¿Usuario o correo ya existen?
+  $select = $con->select("users", "id");
+  $select->where("name", "=", $nombre);
+  if (count($select->execute())) {
+    responder(false, "Ese usuario ya está en uso.");
   }
  
+  $select = $con->select("users", "id");
+  $select->where("email", "=", $correo);
+  if (count($select->execute())) {
+    responder(false, "Ese correo ya está registrado.");
+  }
+ 
+  // Nunca se guarda la contraseña: solo su hash
+  $hash = password_hash($password, PASSWORD_DEFAULT);
+ 
+  try {
+    $insert = $con->insert("users", "name, email, password_hash");
+    $insert->value($nombre);
+    $insert->value($correo);
+    $insert->value($hash);
+    $insert->execute();
+ 
+    $idUsuario = $con->lastInsertId();
+  } catch (Exception $e) {
+    // Por ejemplo, si el índice UNIQUE de la BD detecta un duplicado simultáneo
+    responder(false, "No se pudo crear la cuenta. Intenta con otros datos.");
+  }
+ 
+  if (is_numeric($idUsuario) && $idUsuario > 0) {
+    // Inicia sesión automáticamente después de registrarse
+    session_regenerate_id(true);
+    $_SESSION["user_id"]   = (int)$idUsuario;
+    $_SESSION["user_name"] = $nombre;
+ 
+    responder(true, "Cuenta creada correctamente.");
+  }
+ 
+  responder(false, "No se pudo crear la cuenta.");
 }
+ 
+ 
+// ------------------------------------------------------
+// LOGIN
+// ------------------------------------------------------
+elseif (isset($_GET["iniciarSesion"])) {
+ 
+  $nombre   = trim($_POST["usuario"] ?? "");
+  $password = $_POST["password"] ?? "";
+ 
+  if ($nombre === "" || $password === "") {
+    responder(false, "Escribe tu usuario y tu contraseña.");
+  }
+ 
+  $select = $con->select("users", "id, name, password_hash");
+  $select->where("name", "=", $nombre);
+  $filas = $select->execute();
+ 
+  // Mismo mensaje si falla el usuario o la contraseña, para no revelar cuál existe
+  if (count($filas) && password_verify($password, $filas[0]["password_hash"])) {
+ 
+    session_regenerate_id(true);
+    $_SESSION["user_id"]   = (int)$filas[0]["id"];
+    $_SESSION["user_name"] = $filas[0]["name"];
+ 
+    responder(true, "Bienvenid@.");
+  }
+ 
+  responder(false, "Usuario o contraseña incorrectos.");
+}
+ 
+ 
+// ------------------------------------------------------
+// SESIÓN (para proteger las páginas internas)
+// ------------------------------------------------------
+elseif (isset($_GET["sesionActual"])) {
+ 
+  if (isset($_SESSION["user_id"])) {
+    responder(true, "", array("usuario" => $_SESSION["user_name"]));
+  }
+  responder(false, "Sin sesión.");
+}
+ 
+elseif (isset($_GET["cerrarSesion"])) {
+ 
+  $_SESSION = array();
+  session_destroy();
+  responder(true, "Sesión cerrada.");
+}
+
+
+
 ?>
 
