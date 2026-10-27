@@ -1,0 +1,555 @@
+body {
+        margin: 0;
+        font-family: "DM Sans", sans-serif;
+        color: #3b1414;
+        background: #fffaf3;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        margin: 0;
+        line-height: 1.05;
+      }
+      p {
+        margin: 0;
+      }
+      a {
+        color: inherit;
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+
+      /* Header */
+      header {
+        background: #fffaf3;
+        border-bottom: 2px solid #3b1414;
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 76px;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .brand b {
+        font:
+          800 28px "Bricolage Grotesque",
+          sans-serif;
+      }
+      .mark {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        display: block;
+      }
+      .mark i {
+        position: absolute;
+        display: block;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 22px;
+        border-radius: 999px;
+        font:
+          700 15px "DM Sans",
+          sans-serif;
+        text-decoration: none;
+        border: 2px solid #3b1414;
+        color: #3b1414;
+        background: transparent;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 4px 4px 0 #3b1414;
+      }
+       .shapes {
+        display: flex;
+        gap: 14px;
+      }
+      .shapes span {
+        width: 44px;
+        height: 44px;
+        border: 2px solid #3b1414;
+      }
+
+      /* Title */
+      .intro {
+        padding: 48px 0 36px;
+        position: relative;
+      }
+      .intro h1 {
+        font-size: 56px;
+        font-weight: 800;
+      }
+      .intro p {
+        margin-top: 12px;
+        font-size: 18px;
+      }
+
+      /* Folder */
+      .tabs {
+        display: flex;
+        gap: 8px;
+        padding-left: 28px;
+        position: relative;
+        z-index: 2;
+      }
+      .tab {
+        display: flex;
+        align-items: center;
+        min-height: 52px;
+        padding: 0 34px;
+        font:
+          800 20px "Bricolage Grotesque",
+          sans-serif;
+        text-decoration: none;
+        border: 2px solid #3b1414;
+        border-bottom: 0;
+        border-radius: 20px 20px 0 0;
+        background: #ffc1cc;
+        margin-top: 10px;
+        transition:
+          margin 0.2s,
+          background 0.2s;
+      }
+      .tab:hover {
+        margin-top: 4px;
+      }
+      .tab[aria-current="page"] {
+        background: #fff0df;
+        min-height: 62px;
+        margin-top: 0;
+        margin-bottom: -2px;
+        cursor: default;
+      }
+      .folder {
+        position: relative;
+        z-index: 1;
+        background: #fff0df;
+        border: 2px solid #3b1414;
+        border-radius: 28px;
+        padding: 32px;
+        box-shadow: 8px 8px 0 #3b1414;
+        margin-bottom: 140px;
+      }
+      .hint {
+        margin-top: 14px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .has + .hint + .change {
+        display: block;
+      }
+
+
+      /* Filters */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .chip {
+        min-height: 42px;
+        padding: 0 20px;
+        border-radius: 999px;
+        border: 2px solid #3b1414;
+        background: #fffaf3;
+        color: #3b1414;
+        font:
+          700 15px "DM Sans",
+          sans-serif;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+      }
+      .chip:hover {
+        transform: translateY(-3px);
+      }
+      .chip[aria-pressed="true"] {
+        background: #9f2d2d;
+        color: #fffaf3;
+      }
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 22px;
+      }
+      .count {
+        font-weight: 700;
+      }
+      .more {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 0 20px;
+        border-radius: 999px;
+        border: 2px solid #3b1414;
+        background: #ffc1cc;
+        font:
+          700 15px "DM Sans",
+          sans-serif;
+        color: #3b1414;
+        cursor: pointer;
+      }
+      .more i {
+        width: 10px;
+        height: 10px;
+        border-right: 2px solid #3b1414;
+        border-bottom: 2px solid #3b1414;
+        transform: rotate(45deg) translate(-2px, -2px);
+        transition: transform 0.2s;
+      }
+      .more[aria-expanded="true"] i {
+        transform: rotate(225deg);
+      }
+      .panel {
+        display: none;
+        margin-top: 18px;
+        padding: 24px;
+        background: #fffaf3;
+        border: 2px solid #3b1414;
+        border-radius: 22px;
+        grid-template-columns: repeat(3, 1fr) auto;
+        gap: 18px;
+        align-items: end;
+      }
+      .panel.open {
+        display: grid;
+        animation: rise 0.4s both;
+      }
+      .panel label {
+        display: block;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .panel input,
+      .panel select {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 14px;
+        border: 2px solid #3b1414;
+        border-radius: 14px;
+        background: #fff0df;
+        font:
+          500 15px "DM Sans",
+          sans-serif;
+        color: #3b1414;
+      }
+      .panel input:focus,
+      .panel select:focus {
+        outline: none;
+        border-color: #9f2d2d;
+        box-shadow: 3px 3px 0 #ffc1cc;
+      }
+
+      /* Garments */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        margin-top: 32px;
+      }
+      .item {
+        display: block;
+        aspect-ratio: 4/5;
+        border: 2px solid #3b1414;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #fffaf3;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+        animation: rise 0.6s both;
+      }
+      .item:hover {
+        transform: translate(-4px, -6px) rotate(-1deg);
+        box-shadow: 6px 8px 0 #3b1414;
+      }
+      .item img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      .ph {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 16px;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .empty {
+        display: none;
+        text-align: center;
+        padding: 56px 16px;
+      }
+      .empty h3 {
+        font-size: 28px;
+        margin-top: 20px;
+      }
+      .empty p {
+        margin-top: 8px;
+      }
+
+      /* Add button */
+      .fab {
+        position: fixed;
+        right: 32px;
+        bottom: 32px;
+        z-index: 20;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #9f2d2d;
+        border: 2px solid #3b1414;
+        box-shadow: 5px 5px 0 #3b1414;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+      .fab:hover {
+        transform: translate(-3px, -3px) rotate(90deg);
+        box-shadow: 8px 8px 0 #3b1414;
+      }
+      .fab:before,
+      .fab:after {
+        content: "";
+        position: absolute;
+        background: #fffaf3;
+        border-radius: 2px;
+      }
+      .fab:before {
+        width: 30px;
+        height: 4px;
+      }
+      .fab:after {
+        width: 4px;
+        height: 30px;
+      }
+      .fab span {
+        position: absolute;
+        right: 88px;
+        white-space: nowrap;
+        background: #3b1414;
+        color: #fffaf3;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 14px;
+        opacity: 0;
+        transform: translateX(10px);
+        pointer-events: none;
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+      }
+      .fab:hover span,
+      .fab:focus-visible span {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Decoration */
+      .deco {
+        position: absolute;
+        border: 2px solid #3b1414;
+        pointer-events: none;
+      }
+      .card {
+        background: #fff0df;
+        border: 2px solid #3b1414;
+        border-radius: 28px;
+        padding: 36px;
+        box-shadow: 8px 8px 0 #3b1414;
+        margin-bottom: 96px;
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: 44px;
+        animation: rise 0.7s both;
+      }
+      .photo {
+        position: sticky;
+        top: 24px;
+        align-self: start;
+      }
+      
+      /* Dropzone */
+      .drop {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        aspect-ratio: 4/5;
+        border: 2px dashed #3b1414;
+        border-radius: 24px;
+        background: #ffc1cc;
+        cursor: pointer;
+        overflow: hidden;
+        padding: 24px;
+        transition:
+          background 0.2s,
+          transform 0.2s;
+      }
+      .drop:hover,
+      .drop.over {
+        background: #fffaf3;
+        transform: translateY(-4px);
+      }
+      .drop:focus-within {
+        outline: 3px solid #9f2d2d;
+        outline-offset: 3px;
+      }
+      .hint {
+        margin-top: 14px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .drop input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .drop strong {
+        font:
+          800 24px "Bricolage Grotesque",
+          sans-serif;
+        margin-top: 22px;
+      }
+      .drop small {
+        display: block;
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      .drop img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #fffaf3;
+        display: none;
+      }
+      .drop.has img {
+        display: block;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0);
+        }
+        50% {
+          transform: translateY(-16px) rotate(10deg);
+        }
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .fl {
+        animation: float 5s ease-in-out infinite;
+      }
+      .fl2 {
+        animation-duration: 7s;
+        animation-delay: -2s;
+      }
+      .sp {
+        animation: spin 24s linear infinite;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .panel.open {
+          grid-template-columns: 1fr 1fr;
+        }
+        .intro h1 {
+          font-size: 44px;
+        }
+      }
+      @media (max-width: 560px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .folder {
+          padding: 20px 16px;
+        }
+        .grid {
+          gap: 14px;
+        }
+        .tab {
+          padding: 0 20px;
+          font-size: 17px;
+        }
+        .panel.open {
+          grid-template-columns: 1fr;
+        }
+        .fab {
+          right: 18px;
+          bottom: 18px;
+        }
+        .deco {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }

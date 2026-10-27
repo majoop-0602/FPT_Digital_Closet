@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mis prendas | Closetix</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap"
+    />
+        <link href="../CSS/style-folder.css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <header>
+      <div class="wrap bar">
+        <a class="brand" href="../Index.html">
+          <span class="mark"
+            ><i
+              style="
+                left: 0;
+                top: 0;
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+              "
+            ></i
+            ><i
+              style="
+                right: 0;
+                bottom: 0;
+                width: 22px;
+                height: 22px;
+                background: #ffc1cc;
+                border: 2px solid #3b1414;
+                transform: rotate(12deg);
+              "
+            ></i
+          ></span>
+          <b>Closetix</b>
+        </a>
+        <a class="btn" href="../Index.html">Cerrar sesión</a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="intro">
+        <div
+          class="deco fl"
+          style="
+            right: 40px;
+            top: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #ffc1cc;
+          "
+        ></div>
+        <div
+          class="deco fl fl2"
+          style="
+            right: 150px;
+            top: 90px;
+            width: 34px;
+            height: 34px;
+            background: #9f2d2d;
+            transform: rotate(20deg);
+          "
+        ></div>
+        <div
+          class="deco sp"
+          style="
+            right: 230px;
+            top: 24px;
+            width: 56px;
+            height: 56px;
+            border: 0;
+            background: #3b1414;
+            clip-path: polygon(
+              50% 0,
+              61% 35%,
+              98% 35%,
+              68% 57%,
+              79% 91%,
+              50% 70%,
+              21% 91%,
+              32% 57%,
+              2% 35%,
+              39% 35%
+            );
+          "
+        ></div>
+        <h1>Mis prendas</h1>
+        <p>Todo lo que tienes, en un solo lugar.</p>
+      </section>
+
+      <nav class="tabs" aria-label="Secciones">
+        <a class="tab" href="prendas.html" aria-current="page"
+          >Prendas</a
+        >
+        <a class="tab" href="">Outfits</a>
+      </nav>
+
+      <section class="folder">
+        <div class="chips" id="chips" role="group" aria-label="Categorías">
+          <button
+            class="chip"
+            type="button"
+            data-cat="todos"
+            aria-pressed="true"
+          >
+            Todos
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="tops"
+            aria-pressed="false"
+          >
+            Tops
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="bottoms"
+            aria-pressed="false"
+          >
+            Bottoms
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="vestidos"
+            aria-pressed="false"
+          >
+            Vestidos
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="abrigos"
+            aria-pressed="false"
+          >
+            Abrigos
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="calzado"
+            aria-pressed="false"
+          >
+            Calzado
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="bolsas"
+            aria-pressed="false"
+          >
+            Bolsas
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="accesorios"
+            aria-pressed="false"
+          >
+            Accesorios
+          </button>
+          <button
+            class="chip"
+            type="button"
+            data-cat="otro"
+            aria-pressed="false"
+          >
+            Otro
+          </button>
+        </div>
+
+        <div class="tools">
+          <p class="count" id="count" aria-live="polite"></p>
+          <button
+            class="more"
+            type="button"
+            id="more"
+            aria-expanded="false"
+            aria-controls="panel"
+          >
+            Más filtros <i></i>
+          </button>
+        </div>
+
+        <div class="panel" id="panel">
+          <div>
+            <label for="marca">Marca</label
+            ><input id="marca" type="text" placeholder="Ej. Zara" />
+          </div>
+          <div>
+            <label for="temporada">Temporada</label>
+            <select id="temporada">
+              <option value="">Todas</option>
+              <option value="primavera">Primavera</option>
+              <option value="verano">Verano</option>
+              <option value="otono">Otoño</option>
+              <option value="invierno">Invierno</option>
+              <option value="todo-el-ano">Todo el año</option>
+            </select>
+          </div>
+          <div>
+            <label for="color">Color</label>
+            <select id="color">
+              <option value="">Todos</option>
+              <option value="negro">Negro</option>
+              <option value="blanco">Blanco</option>
+              <option value="gris">Gris</option>
+              <option value="beige">Beige</option>
+              <option value="rojo">Rojo</option>
+              <option value="rosa">Rosa</option>
+              <option value="azul">Azul</option>
+              <option value="verde">Verde</option>
+              <option value="amarillo">Amarillo</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <button class="btn" type="button" id="clear">Limpiar</button>
+        </div>
+
+        <!-- Prendas: reemplaza el contenido de cada .ph con tu <img src="..."> (genera estos bloques con PHP) -->
+        <div class="grid" id="grid">
+          <a
+            class="item"
+            href="#"
+            data-cat="tops"
+            data-marca="Zara"
+            data-temporada="verano"
+            data-color="blanco"
+            ><div class="ph" style="background: #ffc1cc">
+              [IMAGEN DE PRENDA]
+            </div></a
+          >
+          <a
+            class="item"
+            href="#"
+            data-cat="bottoms"
+            data-marca="Levis"
+            data-temporada="todo-el-ano"
+            data-color="azul"
+            ><div class="ph" style="background: #fffaf3">
+              [IMAGEN DE PRENDA]
+            </div></a
+          >
+          <a
+            class="item"
+            href="#"
+            data-cat="vestidos"
+            data-marca="Mango"
+            data-temporada="primavera"
+            data-color="rosa"
+            ><div class="ph" style="background: #fff0df">
+              [IMAGEN DE PRENDA]
+            </div></a
+          >
+          <a
+            class="item"
+            href="#"
+            data-cat="abrigos"
+            data-marca="H&M"
+            data-temporada="invierno"
+            data-color="negro"
+            ><div class="ph" style="background: #fffaf3">
+              [IMAGEN DE PRENDA]
+            </div></a
+          >
+          <a
+            class="item"
+            href="#"
+            data-cat="calzado"
+            data-marca="Nike"
+            data-temporada="todo-el-ano"
+            data-color="blanco"
+            ><div class="ph" style="background: #ffc1cc">
+              [IMAGEN DE PRENDA]
+            </div></a
+          >
+          <a
+            class="item"
+            href="#"
+            data-cat="bolsas"
+            data-marca="Coach"
+            data-temporada="otono"
+            data-color="beige"
+            ><div class="ph" style="background: #fff0df">
+              [IMAGEN DE PRENDA]
+            </div></a
+          >
+        </div>
+
+        <div class="empty" id="empty">
+          <div style="display: flex; justify-content: center; gap: 14px">
+            <span
+              style="
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+              "
+            ></span>
+            <span
+              style="
+                width: 40px;
+                height: 40px;
+                background: #ffc1cc;
+                border: 2px solid #3b1414;
+                transform: rotate(12deg);
+              "
+            ></span>
+            <span
+              style="
+                width: 40px;
+                height: 40px;
+                background: #3b1414;
+                clip-path: polygon(50% 0, 100% 100%, 0 100%);
+              "
+            ></span>
+          </div>
+          <h3>No encontramos prendas</h3>
+          <p>Prueba con otros filtros o agrega una prenda nueva.</p>
+        </div>
+      </section>
+    </main>
+
+    <a
+      class="fab"
+      href="subir-prendas.html"
+      aria-label="Agregar prenda"
+      ><span>Agregar prenda</span></a
+    >
+
+    <script>
+      // Filtrado de demostración sobre los atributos data-*; reemplázalo por tu lógica con PHP/JS.
+      (function () {
+        var cat = "todos";
+        var items = [].slice.call(document.querySelectorAll(".item"));
+        var count = document.getElementById("count");
+        var empty = document.getElementById("empty");
+        var marca = document.getElementById("marca");
+        var temporada = document.getElementById("temporada");
+        var color = document.getElementById("color");
+
+        function apply() {
+          var m = marca.value.trim().toLowerCase(),
+            shown = 0;
+          items.forEach(function (el) {
+            var ok =
+              (cat === "todos" || el.dataset.cat === cat) &&
+              (!m || el.dataset.marca.toLowerCase().indexOf(m) > -1) &&
+              (!temporada.value || el.dataset.temporada === temporada.value) &&
+              (!color.value || el.dataset.color === color.value);
+            el.style.display = ok ? "" : "none";
+            if (ok) shown++;
+          });
+          count.textContent = shown + (shown === 1 ? " prenda" : " prendas");
+          empty.style.display = shown ? "none" : "block";
+        }
+
+        document
+          .getElementById("chips")
+          .addEventListener("click", function (e) {
+            var b = e.target.closest(".chip");
+            if (!b) return;
+            cat = b.dataset.cat;
+            [].forEach.call(document.querySelectorAll(".chip"), function (c) {
+              c.setAttribute("aria-pressed", c === b ? "true" : "false");
+            });
+            apply();
+          });
+
+        var more = document.getElementById("more"),
+          panel = document.getElementById("panel");
+        more.addEventListener("click", function () {
+          var open = panel.classList.toggle("open");
+          more.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        [marca, temporada, color].forEach(function (f) {
+          f.addEventListener("input", apply);
+        });
+        document.getElementById("clear").addEventListener("click", function () {
+          marca.value = "";
+          temporada.value = "";
+          color.value = "";
+          apply();
+        });
+
+        apply();
+      })();
+    </script>
+  </body>
+</html>
