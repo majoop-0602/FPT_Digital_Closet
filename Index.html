@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Closetix</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap"
+    />
+    <link href="CSS/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div style="background: #fffaf3; overflow: hidden">
+      <header
+        style="
+          position: sticky;
+          top: 0;
+          z-index: 10;
+          background: #fffaf3;
+          border-bottom: 2px solid #3b1414;
+        "
+      >
+        <div
+          class="wrap"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 76px;
+          "
+        >
+          <a
+            href="#inicio"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              text-decoration: none;
+            "
+          >
+            <span
+              style="
+                position: relative;
+                width: 38px;
+                height: 38px;
+                display: block;
+              "
+              ><span
+                style="
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  width: 26px;
+                  height: 26px;
+                  border-radius: 50%;
+                  background: #9f2d2d;
+                "
+              ></span
+              ><span
+                style="
+                  position: absolute;
+                  right: 0;
+                  bottom: 0;
+                  width: 22px;
+                  height: 22px;
+                  background: #ffc1cc;
+                  border: 2px solid #3b1414;
+                  transform: rotate(12deg);
+                "
+              ></span
+            ></span>
+            <span
+              style="
+                font:
+                  800 28px &quot;Bricolage Grotesque&quot;,
+                  sans-serif;
+                color: #3b1414;
+              "
+              >Closetix</span
+            >
+          </a>
+          <nav
+            class="navlinks"
+            style="display: flex; gap: 32px; font-weight: 500"
+          >
+            <a href="#como-funciona" style="text-decoration: none"
+              >Cómo funciona</a
+            >
+            <a href="#funciones" style="text-decoration: none">Funciones</a>
+            <a href="#outfits" style="text-decoration: none">Outfits</a>
+          </nav>
+          <div style="display: flex; gap: 12px">
+            <a class="btn" href="PAGES/login.html">Log in</a>
+            <a class="btn red" href="#">Sign up</a>
+          </div>
+        </div>
+      </header>
+
+      <section
+        id="inicio"
+        style="
+          position: relative;
+          background: #fff0df;
+          border-bottom: 2px solid #3b1414;
+          padding: 88px 0 96px;
+        "
+      >
+        <div class="wrap hero">
+          <div>
+            <h1
+              class="rise d1"
+              style="font-size: 76px; font-weight: 800; margin-top: 24px"
+            >
+              Todo lo que tienes,
+              <span style="color: #9f2d2d">a un clic</span> de distancia.
+            </h1>
+            <p
+              class="rise d2"
+              style="
+                font-size: 20px;
+                line-height: 1.55;
+                margin-top: 24px;
+                max-width: 520px;
+              "
+            >
+              Registra tus prendas con una foto, deja que Closetix quite el
+              fondo y llene la ficha por ti, y arma outfits sin vaciar el
+              armario.
+            </p>
+            <div
+              class="rise d3"
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 14px;
+                margin-top: 36px;
+              "
+            >
+              <a
+                class="btn red"
+                href="#"
+                style="min-height: 56px; padding: 0 34px; font-size: 18px"
+                >Crear mi cuenta</a
+              >
+              <a
+                class="btn"
+                href="#como-funciona"
+                style="min-height: 56px; padding: 0 34px; font-size: 18px"
+                >Ver cómo funciona</a
+              >
+            </div>
+          </div>
+          <div style="position: relative; height: 540px">
+            <div
+              class="blob ph"
+              style="
+                position: absolute;
+                inset: 30px 20px;
+                background: #ffc1cc;
+                border: 2px solid #3b1414;
+              "
+            >
+              <img src="IMAGES/header_image.jpg" alt="Imagen en closet" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+            </div>
+            <div
+              class="fl"
+              style="
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 84px;
+                height: 84px;
+                border-radius: 50%;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+              "
+            ></div>
+            <div
+              class="fl fl2"
+              style="
+                position: absolute;
+                right: 0;
+                top: 60px;
+                width: 70px;
+                height: 70px;
+                background: #3b1414;
+                transform: rotate(18deg);
+              "
+            ></div>
+            <div
+              class="sp"
+              style="
+                position: absolute;
+                right: 30px;
+                bottom: 0;
+                width: 110px;
+                height: 110px;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+                clip-path: polygon(
+                  50% 0,
+                  61% 35%,
+                  98% 35%,
+                  68% 57%,
+                  79% 91%,
+                  50% 70%,
+                  21% 91%,
+                  32% 57%,
+                  2% 35%,
+                  39% 35%
+                );
+              "
+            ></div>
+            <div
+              class="fl"
+              style="
+                position: absolute;
+                left: 10px;
+                bottom: 30px;
+                width: 90px;
+                height: 80px;
+                background: #fffaf3;
+                border: 2px solid #3b1414;
+                clip-path: polygon(50% 0, 100% 100%, 0 100%);
+              "
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        style="
+          background: #3b1414;
+          color: #ffc1cc;
+          padding: 22px 0;
+          overflow: hidden;
+          white-space: nowrap;
+        "
+      ></section>
+
+      <section id="como-funciona" style="padding: 110px 0 100px">
+        <div class="wrap">
+          <h2 style="font-size: 56px; font-weight: 800; max-width: 640px">
+            Cómo funciona, en 4 pasos
+          </h2>
+          <p
+            style="
+              font-size: 19px;
+              margin-top: 16px;
+              max-width: 560px;
+              line-height: 1.5;
+            "
+          >
+            Del clóset a la pantalla sin teclear fichas a mano.
+          </p>
+          <div class="g4" style="margin-top: 56px">
+            <div
+              class="card"
+              style="
+                background: #fff0df;
+                border: 2px solid #3b1414;
+                border-radius: 28px;
+                padding: 24px;
+              "
+            >
+              <div
+                style="
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 50%;
+                  background: #9f2d2d;
+                  color: #fffaf3;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font:
+                    800 26px &quot;Bricolage Grotesque&quot;,
+                    sans-serif;
+                "
+              >
+                1
+              </div>
+              <div
+                class="ph"
+                style="height: 240px; border-radius: 18px; margin-top: 20px"
+              >
+                <img src="IMAGES/paso1_image.jpg" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 26px; margin-top: 22px">
+                Tómale foto a tu ropa
+              </h3>
+              <p style="margin-top: 10px; line-height: 1.5">
+                Una foto con tu celular es suficiente. Sin estudio ni fondo
+                especial.
+              </p>
+            </div>
+            <div
+              class="card"
+              style="
+                background: #ffc1cc;
+                border: 2px solid #3b1414;
+                border-radius: 28px;
+                padding: 24px;
+              "
+            >
+              <div
+                style="
+                  width: 56px;
+                  height: 56px;
+                  background: #3b1414;
+                  color: #ffc1cc;
+                  transform: rotate(8deg);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font:
+                    800 26px &quot;Bricolage Grotesque&quot;,
+                    sans-serif;
+                "
+              >
+                2
+              </div>
+              <div
+                class="ph"
+                style="height: 240px; border-radius: 18px; margin-top: 20px"
+              >
+                <img src="IMAGES/paso2_image.jpg" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 26px; margin-top: 22px">Subir y ordenar</h3>
+              <p style="margin-top: 10px; line-height: 1.5">
+                Closetix quita el fondo y llena la ficha con las características
+                de la prenda.
+              </p>
+            </div>
+            <div
+              class="card"
+              style="
+                background: #9f2d2d;
+                color: #fffaf3;
+                border: 2px solid #3b1414;
+                border-radius: 28px;
+                padding: 24px;
+              "
+            >
+              <div
+                style="
+                  width: 56px;
+                  height: 56px;
+                  background: #ffc1cc;
+                  color: #3b1414;
+                  border-radius: 50% 50% 50% 8px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font:
+                    800 26px &quot;Bricolage Grotesque&quot;,
+                    sans-serif;
+                "
+              >
+                3
+              </div>
+              <div
+                class="ph"
+                style="
+                  height: 240px;
+                  border-radius: 18px;
+                  margin-top: 20px;
+                  color: #3b1414;
+                "
+              >
+                <img src="IMAGES/paso3_image.jpg" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 26px; margin-top: 22px">Arma outfits</h3>
+              <p style="margin-top: 10px; line-height: 1.5">
+                Combina tus prendas registradas y agrega los datos básicos de
+                cada look.
+              </p>
+            </div>
+            <div
+              class="card"
+              style="
+                background: #fffaf3;
+                border: 2px solid #3b1414;
+                border-radius: 28px;
+                padding: 24px;
+              "
+            >
+              <div
+                style="
+                  width: 56px;
+                  height: 56px;
+                  background: #ffc1cc;
+                  
+                  clip-path: polygon(
+                    25% 0,
+                    75% 0,
+                    100% 50%,
+                    75% 100%,
+                    25% 100%,
+                    0 50%
+                  );
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font:
+                    800 26px &quot;Bricolage Grotesque&quot;,
+                    sans-serif;
+                "
+              >
+                4
+              </div>
+              <div
+                class="ph"
+                style="
+                  height: 240px;
+                  border-radius: 18px;
+                  margin-top: 20px;
+                  background: #fff0df;
+                "
+              >
+                <img src="IMAGES/paso4_image.png" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 26px; margin-top: 22px">
+                Guarda y vuelve a consultar
+              </h3>
+              <p style="margin-top: 10px; line-height: 1.5">
+                Filtra por temporada, color y más cada vez que necesites
+                inspiración.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="funciones"
+        style="
+          background: #fff0df;
+          border-top: 2px solid #3b1414;
+          border-bottom: 2px solid #3b1414;
+          padding: 100px 0;
+        "
+      >
+        <div class="wrap split">
+          <div>
+            <h2 style="font-size: 52px; font-weight: 800">
+              Tu clóset, con mejor memoria que tú
+            </h2>
+            <p style="font-size: 19px; line-height: 1.55; margin-top: 20px">
+              Dejas de olvidar lo que tienes y empiezas a usarlo de verdad.
+            </p>
+            <div style="display: grid; gap: 22px; margin-top: 36px">
+              <div style="display: flex; gap: 18px; align-items: flex-start">
+                <div
+                  style="
+                    flex: none;
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 50%;
+                    background: #9f2d2d;
+                  "
+                ></div>
+                <div>
+                  <h3 style="font-size: 22px">Fondo fuera, sin esfuerzo</h3>
+                  <p style="margin-top: 6px; line-height: 1.5">
+                    Cada prenda se ve limpia y lista para combinar.
+                  </p>
+                </div>
+              </div>
+              <div style="display: flex; gap: 18px; align-items: flex-start">
+                <div
+                  style="
+                    flex: none;
+                    width: 44px;
+                    height: 44px;
+                    background: #ffc1cc;
+                    border: 2px solid #3b1414;
+                    transform: rotate(10deg);
+                  "
+                ></div>
+                <div>
+                  <h3 style="font-size: 22px">Ficha automática</h3>
+                  <p style="margin-top: 6px; line-height: 1.5">
+                    Tipo, color y temporada se llenan solos; tú solo revisas.
+                  </p>
+                </div>
+              </div>
+              <div style="display: flex; gap: 18px; align-items: flex-start">
+                <div
+                  style="
+                    flex: none;
+                    width: 44px;
+                    height: 44px;
+                    background: #3b1414;
+                    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+                  "
+                ></div>
+                <div>
+                  <h3 style="font-size: 22px">Filtros a tu medida</h3>
+                  <p style="margin-top: 6px; line-height: 1.5">
+                    Encuentra prendas por temporada, color y más en segundos.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="position: relative; height: 520px">
+            <div
+              class="ph"
+              style="
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 62%;
+                height: 340px;
+                border-radius: 32px;
+                background: #ffc1cc;
+              "
+            >
+              <img src="IMAGES/outfit1.jpg" alt="Planear outfit" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+            </div>
+            <div
+              class="ph blob"
+              style="
+                position: absolute;
+                right: 0;
+                top: 120px;
+                width: 52%;
+                height: 380px;
+                background: #fffaf3;
+              "
+            >
+              <img src="IMAGES/browse_image.jpg" alt="Filtar tus prendas" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+            </div>
+            <div
+              class="fl"
+              style="
+                position: absolute;
+                left: 12%;
+                bottom: 10px;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+              "
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="outfits" style="padding: 110px 0">
+        <div class="wrap">
+          <div
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              align-items: flex-end;
+              gap: 24px;
+            "
+          >
+            <h2 style="font-size: 56px; font-weight: 800; max-width: 620px">
+              Arma outfits con lo que ya tienes
+            </h2>
+            <p style="font-size: 19px; line-height: 1.5; max-width: 420px">
+              Combina prendas registradas, agrega los datos del look y
+              consúltalo cuando lo necesites.
+            </p>
+          </div>
+          <div
+            class="g4"
+            style="
+              margin-top: 56px;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            "
+          >
+            <div class="card">
+              <div
+                class="ph"
+                style="
+                  height: 380px;
+                  border-radius: 200px 200px 24px 24px;
+                  background: #ffc1cc;
+                "
+              >
+                <img src="IMAGES/work-image.jpg" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 24px; margin-top: 18px">Look de oficina</h3>
+              <p style="margin-top: 6px">
+                Temporada, ocasión y notas en una sola ficha.
+              </p>
+            </div>
+            <div class="card" style="margin-top: 40px">
+              <div
+                class="ph"
+                style="height: 380px; border-radius: 24px; background: #fff0df"
+              >
+                 <img src="IMAGES/goingout-image.jpg" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 24px; margin-top: 18px">Fin de semana</h3>
+              <p style="margin-top: 6px">Guárdalo y repítelo sin pensar.</p>
+            </div>
+            <div class="card">
+              <div class="ph blob" style="height: 380px; background: #ffc1cc">
+                 <img src="IMAGES/nightout-image.jpg" alt="Toma Foto" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+              </div>
+              <h3 style="font-size: 24px; margin-top: 18px">Salida de noche</h3>
+              <p style="margin-top: 6px">
+                Filtra tus outfits igual que tus prendas.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        style="
+          position: relative;
+          background: #9f2d2d;
+          color: #fffaf3;
+          border-top: 2px solid #3b1414;
+          padding: 100px 0;
+          text-align: center;
+        "
+      >
+        <div
+          class="fl"
+          style="
+            position: absolute;
+            left: 8%;
+            top: 60px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #ffc1cc;
+          "
+        ></div>
+        <div
+          class="sp"
+          style="
+            position: absolute;
+            right: 9%;
+            bottom: 60px;
+            width: 90px;
+            height: 90px;
+            background: #ffc1cc;
+            clip-path: polygon(
+              50% 0,
+              61% 35%,
+              98% 35%,
+              68% 57%,
+              79% 91%,
+              50% 70%,
+              21% 91%,
+              32% 57%,
+              2% 35%,
+              39% 35%
+            );
+          "
+        ></div>
+        <div
+          class="fl fl2"
+          style="
+            position: absolute;
+            right: 20%;
+            top: 50px;
+            width: 44px;
+            height: 44px;
+            background: #3b1414;
+            transform: rotate(20deg);
+          "
+        ></div>
+        <div class="wrap" style="position: relative">
+          <h2
+            style="
+              font-size: 64px;
+              font-weight: 800;
+              max-width: 760px;
+              margin: 0 auto;
+            "
+          >
+            Empieza a ordenar tu clóset hoy
+          </h2>
+          <p
+            style="
+              font-size: 20px;
+              margin: 20px auto 0;
+              max-width: 520px;
+              line-height: 1.5;
+            "
+          >
+            Crea tu cuenta y registra tu primera prenda en un minuto.
+          </p>
+          <div
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 14px;
+              margin-top: 36px;
+            "
+          >
+            <a
+              class="btn pink"
+              href="#"
+              style="min-height: 56px; padding: 0 36px; font-size: 18px"
+              >Sign up</a
+            >
+            <a
+              class="btn"
+              href="PAGES/login.html"
+              style="
+                min-height: 56px;
+                padding: 0 36px;
+                font-size: 18px;
+                color: #fffaf3;
+                border-color: #fffaf3;
+              "
+              >Log in</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <footer style="background: #3b1414; color: #fff0df; padding: 48px 0">
+        <div
+          class="wrap"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+          "
+        >
+          <span
+            style="
+              font:
+                800 28px &quot;Bricolage Grotesque&quot;,
+                sans-serif;
+              color: #ffc1cc;
+            "
+            >Closetix</span
+          >
+          <div style="display: flex; gap: 28px; flex-wrap: wrap">
+            <a href="#como-funciona" style="text-decoration: none"
+              >Cómo funciona</a
+            ><a href="#funciones" style="text-decoration: none">Funciones</a
+            ><a href="#outfits" style="text-decoration: none">Outfits</a>
+          </div>
+          <span style="font-size: 14px"
+            >Closetix 2026. Todos los derechos reservados.</span
+          >
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
