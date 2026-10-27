@@ -229,10 +229,11 @@
         font-size: 14px;
         line-height: 1.5;
       }
-      .hint {
+      .change {
+        display: none;
         margin-top: 14px;
-        font-size: 14px;
-        line-height: 1.5;
+        font-weight: 700;
+        text-align: center;
       }
       .has + .hint + .change {
         display: block;
@@ -491,6 +492,28 @@
           transition: none !important;
         }
       }
+      .msg {
+        font-weight: 700;
+        color: #9f2d2d;
+        line-height: 1.4;
+      }
+      .msg:empty {
+        display: none;
+      }
+      @keyframes pulse {
+        from {
+          opacity: 0.35;
+        }
+        to {
+          opacity: 0.75;
+        }
+      }
+      .drop.busy img {
+        animation: pulse 0.9s ease-in-out infinite alternate;
+      }
+      .drop.busy {
+        cursor: progress;
+      }
     </style>
   </head>
   <body>
@@ -526,7 +549,7 @@
         <a
           class="btn"
           id="btnSalir"
-          href="../Index.html"
+          href="login.html"
           style="min-height: 44px; font-size: 15px"
           >Cerrar sesión</a
         >
@@ -576,7 +599,13 @@
         <p>Sube una foto y completa los datos de tu prenda.</p>
       </section>
 
-      <form class="card" action="#" method="post" enctype="multipart/form-data">
+      <form
+        id="frmPrenda"
+        class="card"
+        action="#"
+        method="post"
+        enctype="multipart/form-data"
+      >
         <div class="photo">
           <label class="drop" id="drop">
             <span class="shapes"
@@ -605,8 +634,8 @@
               required
             />
           </label>
-          <p class="hint">
-            Closetix quitará el fondo de la imagen.
+          <p class="hint" id="estado">
+            Closetix quitará el fondo de la imagen
           </p>
           <p class="change">Haz clic en la imagen para cambiarla</p>
         </div>
@@ -616,45 +645,42 @@
             <legend>Categoría</legend>
             <div class="chips">
               <label
-                ><input
-                  type="radio"
-                  name="categoria"
-                  value="tops"
-                  required
-                /><span>Tops</span></label
+                ><input type="radio" name="categoria" value="1" required /><span
+                  >Tops</span
+                ></label
               >
               <label
-                ><input type="radio" name="categoria" value="bottoms" /><span
+                ><input type="radio" name="categoria" value="2" /><span
                   >Bottoms</span
                 ></label
               >
               <label
-                ><input type="radio" name="categoria" value="vestidos" /><span
+                ><input type="radio" name="categoria" value="3" /><span
                   >Vestidos</span
                 ></label
               >
               <label
-                ><input type="radio" name="categoria" value="abrigos" /><span
+                ><input type="radio" name="categoria" value="4" /><span
                   >Abrigos</span
                 ></label
               >
               <label
-                ><input type="radio" name="categoria" value="calzado" /><span
+                ><input type="radio" name="categoria" value="5" /><span
                   >Calzado</span
                 ></label
               >
               <label
-                ><input type="radio" name="categoria" value="bolsas" /><span
+                ><input type="radio" name="categoria" value="6" /><span
                   >Bolsas</span
                 ></label
               >
               <label
-                ><input type="radio" name="categoria" value="accesorios" /><span
+                ><input type="radio" name="categoria" value="7" /><span
                   >Accesorios</span
                 ></label
               >
               <label
-                ><input type="radio" name="categoria" value="otro" /><span
+                ><input type="radio" name="categoria" value="8" /><span
                   >Otro</span
                 ></label
               >
@@ -759,6 +785,7 @@
             >
           </div>
 
+          <p class="msg full" id="msg" role="alert"></p>
           <div class="full actions">
             <button class="btn red" type="submit">Guardar prenda</button>
             <a
@@ -772,44 +799,8 @@
       </form>
     </main>
 
-    <script>
-      (function () {
-        var input = document.getElementById("imagen"),
-          drop = document.getElementById("drop"),
-          img = document.getElementById("preview");
-        function show(file) {
-          if (!file || file.type.indexOf("image/") !== 0) return;
-          var r = new FileReader();
-          r.onload = function (e) {
-            img.src = e.target.result;
-            drop.classList.add("has");
-          };
-          r.readAsDataURL(file);
-        }
-        input.addEventListener("change", function () {
-          show(input.files[0]);
-        });
-        ["dragenter", "dragover"].forEach(function (t) {
-          drop.addEventListener(t, function (e) {
-            e.preventDefault();
-            drop.classList.add("over");
-          });
-        });
-        ["dragleave", "drop"].forEach(function (t) {
-          drop.addEventListener(t, function (e) {
-            e.preventDefault();
-            drop.classList.remove("over");
-          });
-        });
-        drop.addEventListener("drop", function (e) {
-          if (e.dataTransfer.files.length) {
-            input.files = e.dataTransfer.files;
-            show(input.files[0]);
-          }
-        });
-      })();
-    </script>
-     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../JS/auth.js"></script>
+    <script type="module" src="../JS/prendas.js"></script>
   </body>
 </html>

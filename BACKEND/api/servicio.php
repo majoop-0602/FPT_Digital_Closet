@@ -166,6 +166,120 @@ elseif (isset($_GET["cerrarSesion"])) {
   responder(true, "Sesión cerrada.");
 }
 
+ 
+// ------------------------------------------------------
+// PRENDAS: agregar
+// ------------------------------------------------------
+elseif (isset($_GET["agregarPrenda"])) {
+ 
+  // Solo usuarios con sesión iniciada
+  if (!isset($_SESSION["user_id"])) {
+    responder(false, "Debes iniciar sesión.");
+  }
+  $idUsuario = (int)$_SESSION["user_id"];
+ 
+  $idCategoria = (int)($_POST["categoria"] ?? 0);
+  $nombre      = trim($_POST["nombre"] ?? "");
+  $marca       = trim($_POST["marca"] ?? "");
+  $color       = trim($_POST["color"] ?? "");
+  $talla       = trim($_POST["talla"] ?? "");
+  $temporadaIn = $_POST["temporada"] ?? "";
+  $material    = trim($_POST["material"] ?? "");
+  $notas       = trim($_POST["notas"] ?? "");
+  $favorita    = isset($_POST["favorita"]) ? 1 : 0;
+ 
+  // El formulario manda "otono" y "todo-el-ano"; la BD guarda el enum exacto
+  $temporadas = array(
+    "primavera"   => "Primavera",
+    "verano"      => "Verano",
+    "otono"       => "Otoño",
+    "invierno"    => "Invierno",
+    "todo-el-ano" => "Todo_anio"
+  );
+ 
+  if ($nombre === "" || mb_strlen($nombre) > 100) {
+    responder(false, "Escribe el nombre de la prenda (máximo 100 caracteres).");
+  }
+  if ($color === "" || mb_strlen($color) > 30) {
+    responder(false, "Elige un color.");
+  }
+  if (!isset($temporadas[$temporadaIn])) {
+    responder(false, "Elige una temporada válida.");
+  }
+  $temporada = $temporadas[$temporadaIn];
+ 
+  // Ajusta estos límites al tamaño real de tus columnas
+  $marca    = mb_substr($marca, 0, 60);
+  $talla    = mb_substr($talla, 0, 10);
+  $material = mb_substr($material, 0, 100);
+  $notas    = mb_substr($notas, 0, 500);
+ 
+  // La categoría debe existir en la tabla categories
+  $select = $con->select("categories", "id");
+  $select->where("id", "=", $idCategoria);
+  if (!count($select->execute())) {
+    responder(false, "Elige una categoría válida.");
+  }
+ 
+  // ----- Imagen -----
+  if (!isset($_FILES["imagen"]) || $_FILES["imagen"]["error"] !== UPLOAD_ERR_OK) {
+    responder(false, "No se recibió la imagen (revisa que no pese demasiado).");
+  }
+  if ($_FILES["imagen"]["size"] > 5 * 1024 * 1024) {
+    responder(false, "La imagen no debe pesar más de 5 MB.");
+  }
+ 
+  // Se revisa el contenido real del archivo, no la extensión que manda el navegador
+  $finfo = finfo_open(FILEINFO_MIME_TYPE);
+  $mime  = finfo_file($finfo, $_FILES["imagen"]["tmp_name"]);
+  finfo_close($finfo);
+ 
+  $extensiones = array("image/png" => "png", "image/jpeg" => "jpg", "image/webp" => "webp");
+  if (!isset($extensiones[$mime])) {
+    responder(false, "Solo se permiten imágenes PNG, JPG o WEBP.");
+  }
+ 
+  // Nombre aleatorio: nunca se usa el nombre original del archivo
+  $carpeta = dirname(__DIR__) . "/../IMAGES/prendas";
+  if (!is_dir($carpeta) && !mkdir($carpeta, 0755, true)) {
+    responder(false, "No se pudo preparar la carpeta de imágenes.");
+  }
+ 
+  $archivo = bin2hex(random_bytes(16)) . "." . $extensiones[$mime];
+  if (!move_uploaded_file($_FILES["imagen"]["tmp_name"], $carpeta . "/" . $archivo)) {
+    responder(false, "No se pudo guardar la imagen.");
+  }
+  $rutaImagen = "IMAGES/prendas/" . $archivo; // ruta relativa a la raíz del proyecto
+ 
+  // ----- Insert -----
+  try {
+    $insert = $con->insert("clothing_items", "user_id, category_id, name, brand, color, size, season, material, notes, image_path, is_favorite");
+    $insert->value($idUsuario);
+    $insert->value($idCategoria);
+    $insert->value($nombre);
+    $insert->value($marca);
+    $insert->value($color);
+    $insert->value($talla);
+    $insert->value($temporada);
+    $insert->value($material);
+    $insert->value($notas);
+    $insert->value($rutaImagen);
+    $insert->value($favorita);
+    $insert->execute();
+ 
+    $idPrenda = $con->lastInsertId();
+  } catch (Exception $e) {
+    unlink($carpeta . "/" . $archivo); // no dejar imágenes huérfanas
+    responder(false, "No se pudo guardar la prenda.");
+  }
+ 
+  if (is_numeric($idPrenda) && $idPrenda > 0) {
+    responder(true, "Prenda agregada.", array("id" => (int)$idPrenda));
+  }
+ 
+  unlink($carpeta . "/" . $archivo);
+  responder(false, "No se pudo guardar la prenda.");
+}
 
 
 ?>
