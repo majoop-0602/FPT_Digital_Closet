@@ -281,6 +281,72 @@ elseif (isset($_GET["agregarPrenda"])) {
   responder(false, "No se pudo guardar la prenda.");
 }
 
+ 
+// ------------------------------------------------------
+// PRENDAS: consultar (solo las del usuario con sesión)
+// ------------------------------------------------------
+elseif (isset($_GET["prendas"])) {
+ 
+  if (!isset($_SESSION["user_id"])) {
+    responder(false, "Debes iniciar sesión.");
+  }
+  $idUsuario = (int)$_SESSION["user_id"];   // sale de la sesión, nunca del navegador
+ 
+  // Filtros opcionales
+  $idCategoria = (int)($_POST["categoria"] ?? 0);   // 0 = todas
+  $marca       = trim($_POST["marca"] ?? "");
+  $temporadaIn = $_POST["temporada"] ?? "";
+  $color       = trim($_POST["color"] ?? "");
+ 
+  $temporadas = array(
+    "primavera"   => "Primavera",
+    "verano"      => "Verano",
+    "otono"       => "Otoño",
+    "invierno"    => "Invierno",
+    "todo-el-ano" => "Todo_anio"
+  );
+ 
+  $select = $con->select("clothing_items", "id, category_id, name, brand, image_path, is_favorite");
+  $select->where("user_id", "=", $idUsuario);
+ 
+  if ($idCategoria > 0) {
+    $select->where_and("category_id", "=", $idCategoria);
+  }
+  if ($temporadaIn !== "") {
+    if (!isset($temporadas[$temporadaIn])) {
+      responder(false, "Temporada no válida.");
+    }
+    $select->where_and("season", "=", $temporadas[$temporadaIn]);
+  }
+  if ($color !== "") {
+    $select->where_and("color", "=", $color);
+  }
+  $select->orderby("id DESC");
+ 
+  $filas = $select->execute();
+ 
+  // La marca se filtra aquí para aceptar coincidencias parciales (ej. "zar" encuentra "Zara")
+  if ($marca !== "") {
+    $filas = array_values(array_filter($filas, function ($fila) use ($marca) {
+      return mb_stripos((string)$fila["brand"], $marca) !== false;
+    }));
+  }
+ 
+  // Solo se devuelve lo que la vista necesita
+  $prendas = array();
+  foreach ($filas as $fila) {
+    $prendas[] = array(
+      "id"          => (int)$fila["id"],
+      "categoria"   => (int)$fila["category_id"],
+      "nombre"      => $fila["name"],
+      "imagen"      => $fila["image_path"],
+      "es_favorita" => (int)$fila["is_favorite"]
+    );
+  }
+ 
+  responder(true, "", array("prendas" => $prendas));
+}
+
 
 ?>
 

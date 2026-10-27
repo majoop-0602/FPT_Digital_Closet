@@ -1,139 +1,103 @@
-// Se carga como módulo: <script type="module" src="js/prendas-agregar.js"></script>
-// Requiere jQuery y auth.js cargados antes (para protegerPagina y el botón de salir).
-import * as imgly from "https://esm.sh/@imgly/background-removal@1.5.5";
- 
-const quitarFondo = imgly.removeBackground || imgly.default;
- 
-const API = "../BACKEND/api";          // mismo ajuste de ruta que en auth.js
-const MAX_LADO = 1600;      // se reduce la foto antes de procesarla: más rápido y pesa menos
- 
-const $form = $("#frmPrenda");
-const $drop = $("#drop");
-const $btn = $form.find("button[type=submit]");
-const input = document.getElementById("imagen");
-const preview = document.getElementById("preview");
-const estado = document.getElementById("estado");
-const textoInicial = estado.textContent;
- 
-let imagenFinal = null;   // Blob que se enviará al servidor
-let ultimaURL = null;
-let turno = 0;            // evita que una foto vieja pise a una nueva
- 
-protegerPagina();         // si no hay sesión, manda al login
- 
-function mensaje(texto) {
-  $("#msg").text(texto);
+// Requiere jQuery y auth.js cargados antes (protegerPagina y el botón de salir).
+// API viene de auth.js (no la declares otra vez: los scripts normales comparten el mismo ámbito).
+const RAIZ = "../";       // prefijo para llegar a las imágenes desde esta página. Si está en PAGES/, usa "../"
+
+const FONDOS = ["#FFC1CC", "#FFFAF3", "#FFF0DF"];   // colores que se alternan detrás de cada prenda
+
+const $grid = $("#grid");
+const $count = $("#count");
+const $empty = $("#empty");
+const $marca = $("#marca");
+const $temporada = $("#temporada");
+const $color = $("#color");
+
+let categoria = 0;     // 0 = todas
+let turno = 0;         // evita que una respuesta lenta pise a una más nueva
+let espera = null;
+
+protegerPagina();      // si no hay sesión, manda al login
+
+function dibujar(prendas) {
+  $grid.empty();
+
+  prendas.forEach(function (p, i) {
+    const $img = $("<img>")
+      .attr("src", RAIZ + p.imagen)
+      .attr("alt", p.nombre)
+      .attr("loading", "lazy");
+
+    $("<a>")
+      .addClass("item")
+      .attr("href", "#")
+      .attr("data-id", p.id)
+      .css({ background: FONDOS[i % FONDOS.length], animationDelay: Math.min(i, 12) * 0.04 + "s" })
+      .append($img)
+      .appendTo($grid);
+  });
+
+  $count.text(prendas.length + (prendas.length === 1 ? " prenda" : " prendas"));
+  $empty.css("display", prendas.length ? "none" : "block");
 }
- 
-function mostrarPreview(blob) {
-  if (ultimaURL) URL.revokeObjectURL(ultimaURL);
-  ultimaURL = URL.createObjectURL(blob);
-  preview.src = ultimaURL;
-  $drop.addClass("has");
-}
- 
-// Reduce la imagen a un máximo de MAX_LADO px por lado
-async function reducir(file) {
-  const bmp = await createImageBitmap(file);
-  const escala = Math.min(1, MAX_LADO / Math.max(bmp.width, bmp.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bmp.width * escala);
-  canvas.height = Math.round(bmp.height * escala);
-  canvas.getContext("2d").drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  bmp.close();
-  return new Promise((res, rej) =>
-    canvas.toBlob(b => (b ? res(b) : rej(new Error("No se pudo reducir la imagen"))), "image/jpeg", 0.92)
-  );
-}
- 
-async function procesar(file) {
-  if (!file || !file.type.startsWith("image/")) {
-    mensaje("Elige un archivo de imagen.");
-    return;
-  }
- 
+
+function cargar() {
   const miTurno = ++turno;
-  mensaje("");
-  imagenFinal = null;
-  mostrarPreview(file);
-  $drop.addClass("busy");
-  $btn.prop("disabled", true);
-  estado.textContent = "Quitando el fondo… la primera vez descarga el modelo y puede tardar.";
- 
-  try {
-    const reducida = await reducir(file);
-    const resultado = await quitarFondo(reducida, {
-      progress: (key, actual, total) => {
-        if (miTurno === turno && key.startsWith("fetch") && total) {
-          estado.textContent = `Preparando el modelo… ${Math.round((actual / total) * 100)}%`;
-        }
+
+  $grid.attr("aria-busy", "true");
+
+  $.post(`${API}/servicio.php?prendas`, {
+    categoria: categoria,
+    marca: $marca.val(),
+    temporada: $temporada.val(),
+    color: $color.val()
+  }, function (respuesta) {
+    if (miTurno !== turno) return;
+
+    $grid.attr("aria-busy", "false");
+
+    if (!respuesta.ok) {
+      if (respuesta.mensaje === "Debes iniciar sesión.") {
+        location.href = "closetix-login.html";
+        return;
       }
-    });
- 
-    if (miTurno !== turno) return;
-    imagenFinal = resultado;             // PNG con fondo transparente
-    mostrarPreview(resultado);
-    estado.textContent = "Listo, fondo eliminado.";
-  } catch (error) {
-    console.error(error);
-    if (miTurno !== turno) return;
-    imagenFinal = file;                  // si falla, se usa la imagen original
-    estado.textContent = "No se pudo quitar el fondo; se guardará la imagen original.";
-  } finally {
-    if (miTurno === turno) {
-      $drop.removeClass("busy");
-      $btn.prop("disabled", false);
+      $count.text(respuesta.mensaje);
+      return;
     }
-  }
+    dibujar(respuesta.prendas);
+  }, "json").fail(function () {
+    if (miTurno !== turno) return;
+    $grid.attr("aria-busy", "false");
+    $count.text("No se pudo conectar con el servidor.");
+  });
 }
- 
-// ---- Selección y arrastre ----
-input.addEventListener("change", () => procesar(input.files[0]));
- 
-["dragenter", "dragover"].forEach(t =>
-  $drop[0].addEventListener(t, e => { e.preventDefault(); $drop.addClass("over"); }));
-["dragleave", "drop"].forEach(t =>
-  $drop[0].addEventListener(t, e => { e.preventDefault(); $drop.removeClass("over"); }));
-$drop[0].addEventListener("drop", e => {
-  if (e.dataTransfer.files.length) {
-    input.files = e.dataTransfer.files;
-    procesar(input.files[0]);
-  }
+
+// ---- Categorías ----
+$("#chips").on("click", ".chip", function () {
+  categoria = parseInt($(this).data("cat"), 10);
+  $(".chip").attr("aria-pressed", "false");
+  $(this).attr("aria-pressed", "true");
+  cargar();
 });
- 
-// ---- Guardar ----
-$form.on("submit", function (event) {
-  event.preventDefault();
-  mensaje("");
- 
-  if (!imagenFinal) {
-    mensaje("Sube la foto de la prenda.");
-    return;
-  }
- 
-  const datos = new FormData(this);
-  datos.set("imagen", imagenFinal, imagenFinal.type === "image/png" ? "prenda.png" : (imagenFinal.name || "prenda"));
- 
-  $btn.prop("disabled", true);
- 
-  $.ajax({
-    url: `${API}/servicio.php?agregarPrenda`,
-    method: "POST",
-    data: datos,
-    processData: false,   // necesario para enviar archivos con FormData
-    contentType: false,
-    dataType: "json"
-  })
-    .done(respuesta => {
-      if (respuesta.ok) {
-        location.href = "prendas.html";
-      } else {
-        mensaje(respuesta.mensaje);
-        $btn.prop("disabled", false);
-      }
-    })
-    .fail(() => {
-      mensaje("No se pudo conectar con el servidor. Intenta de nuevo.");
-      $btn.prop("disabled", false);
-    });
+
+// ---- Más filtros ----
+$("#more").on("click", function () {
+  const abierto = $("#panel").toggleClass("open").hasClass("open");
+  $(this).attr("aria-expanded", abierto ? "true" : "false");
 });
+
+$temporada.on("change", cargar);
+$color.on("change", cargar);
+
+// La marca espera un momento después de escribir para no consultar con cada letra
+$marca.on("input", function () {
+  clearTimeout(espera);
+  espera = setTimeout(cargar, 300);
+});
+
+$("#clear").on("click", function () {
+  $marca.val("");
+  $temporada.val("");
+  $color.val("");
+  cargar();
+});
+
+cargar();
