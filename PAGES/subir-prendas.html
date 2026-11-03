@@ -514,6 +514,40 @@
       .drop.busy {
         cursor: progress;
       }
+      [hidden] {
+        display: none !important;
+      }
+      .hint:empty {
+        display: none;
+      }
+      .view .change {
+        display: none !important;
+      }
+      .drop.locked {
+        cursor: default;
+        pointer-events: none;
+      }
+      .view input[type=text]:disabled,
+      .view select:disabled,
+      .view textarea:disabled {
+        opacity: 1;
+        color: #3b1414;
+        -webkit-text-fill-color: #3b1414;
+        background: #fff0df;
+        cursor: default;
+      }
+      .view select:disabled {
+        background-image: none;
+        padding-right: 18px;
+      }
+      .view .chips label,
+      .view .fav {
+        cursor: default;
+        pointer-events: none;
+      }
+      .view .chips input:not(:checked) + span {
+        opacity: 0.45;
+      }
     </style>
   </head>
   <body>
@@ -595,8 +629,8 @@
         <a class="back" href="prendas.html"
           ><i></i>Volver a mis prendas</a
         >
-        <h1>Agregar prenda</h1>
-        <p>Sube una foto y completa los datos de tu prenda.</p>
+        <h1 id="titulo">Agregar prenda</h1>
+        <p id="subtitulo">Sube una foto y completa los datos de tu prenda.</p>
       </section>
 
       <form
@@ -635,7 +669,7 @@
             />
           </label>
           <p class="hint" id="estado">
-            Closetix quitará el fondo de la imagen 
+            Closetix quitará el fondo de la imagen.
           </p>
           <p class="change">Haz clic en la imagen para cambiarla</p>
         </div>
@@ -787,9 +821,15 @@
 
           <p class="msg full" id="msg" role="alert"></p>
           <div class="full actions">
-            <button class="btn red" type="submit">Guardar prenda</button>
+            <button class="btn red" type="submit" id="btnGuardar">
+              Guardar prenda
+            </button>
+            <button class="btn red" type="button" id="btnEditar" hidden>
+              Editar prenda
+            </button>
             <a
               class="btn"
+              id="btnCancelar"
               href="prendas.html"
               style="min-height: 56px; font-size: 18px"
               >Cancelar</a
@@ -802,6 +842,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../JS/auth.js"></script>
     <script type="module" src="../JS/prendas-agregar.js"></script>
-    
+
   </body>
 </html>
