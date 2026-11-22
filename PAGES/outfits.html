@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mis outfits | Closetix</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: "DM Sans", sans-serif;
+        color: #3b1414;
+        background: #fffaf3;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        margin: 0;
+        line-height: 1.05;
+      }
+      p {
+        margin: 0;
+      }
+      a {
+        color: inherit;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+
+      /* Header */
+      header {
+        background: #fffaf3;
+        border-bottom: 2px solid #3b1414;
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 76px;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .brand b {
+        font:
+          800 28px "Bricolage Grotesque",
+          sans-serif;
+      }
+      .mark {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        display: block;
+      }
+      .mark i {
+        position: absolute;
+        display: block;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 22px;
+        border-radius: 999px;
+        font:
+          700 15px "DM Sans",
+          sans-serif;
+        text-decoration: none;
+        border: 2px solid #3b1414;
+        color: #3b1414;
+        background: transparent;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 4px 4px 0 #3b1414;
+      }
+
+      /* Title */
+      .intro {
+        padding: 48px 0 36px;
+        position: relative;
+      }
+      .intro h1 {
+        font-size: 56px;
+        font-weight: 800;
+      }
+      .intro p {
+        margin-top: 12px;
+        font-size: 18px;
+      }
+
+      /* Folder */
+      .tabs {
+        display: flex;
+        gap: 8px;
+        padding-left: 28px;
+        position: relative;
+        z-index: 2;
+      }
+      .tab {
+        display: flex;
+        align-items: center;
+        min-height: 52px;
+        padding: 0 34px;
+        font:
+          800 20px "Bricolage Grotesque",
+          sans-serif;
+        text-decoration: none;
+        border: 2px solid #3b1414;
+        border-bottom: 0;
+        border-radius: 20px 20px 0 0;
+        background: #ffc1cc;
+        margin-top: 10px;
+        transition:
+          margin 0.2s,
+          background 0.2s;
+      }
+      .tab:hover {
+        margin-top: 4px;
+      }
+      .tab[aria-current="page"] {
+        background: #fff0df;
+        min-height: 62px;
+        margin-top: 0;
+        margin-bottom: -2px;
+        cursor: default;
+      }
+      .folder {
+        position: relative;
+        z-index: 1;
+        background: #fff0df;
+        border: 2px solid #3b1414;
+        border-radius: 28px;
+        padding: 32px;
+        box-shadow: 8px 8px 0 #3b1414;
+        margin-bottom: 140px;
+      }
+
+      /* Filters */
+      .label {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .chip {
+        min-height: 42px;
+        padding: 0 20px;
+        border-radius: 999px;
+        border: 2px solid #3b1414;
+        background: #fffaf3;
+        color: #3b1414;
+        font:
+          700 15px "DM Sans",
+          sans-serif;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+      }
+      .chip:hover {
+        transform: translateY(-3px);
+      }
+      .chip[aria-pressed="true"] {
+        background: #9f2d2d;
+        color: #fffaf3;
+      }
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 22px;
+      }
+      .count {
+        font-weight: 700;
+      }
+      .more {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 0 20px;
+        border-radius: 999px;
+        border: 2px solid #3b1414;
+        background: #ffc1cc;
+        font:
+          700 15px "DM Sans",
+          sans-serif;
+        color: #3b1414;
+        cursor: pointer;
+      }
+      .more i {
+        width: 10px;
+        height: 10px;
+        border-right: 2px solid #3b1414;
+        border-bottom: 2px solid #3b1414;
+        transform: rotate(45deg) translate(-2px, -2px);
+        transition: transform 0.2s;
+      }
+      .more[aria-expanded="true"] i {
+        transform: rotate(225deg);
+      }
+      .panel {
+        display: none;
+        margin-top: 18px;
+        padding: 24px;
+        background: #fffaf3;
+        border: 2px solid #3b1414;
+        border-radius: 22px;
+        grid-template-columns: 1.3fr 1fr 1fr auto auto;
+        gap: 18px;
+        align-items: end;
+      }
+      .panel.open {
+        display: grid;
+        animation: rise 0.4s both;
+      }
+      .panel label.t {
+        display: block;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .panel input[type="text"],
+      .panel select {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 14px;
+        border: 2px solid #3b1414;
+        border-radius: 14px;
+        background: #fff0df;
+        font:
+          500 15px "DM Sans",
+          sans-serif;
+        color: #3b1414;
+      }
+      .panel input[type="text"]:focus,
+      .panel select:focus {
+        outline: none;
+        border-color: #9f2d2d;
+        box-shadow: 3px 3px 0 #ffc1cc;
+      }
+      .favf {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 46px;
+        cursor: pointer;
+        position: relative;
+        font-weight: 700;
+        font-size: 15px;
+        white-space: nowrap;
+      }
+      .favf input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        cursor: pointer;
+      }
+      .star {
+        width: 34px;
+        height: 34px;
+        flex: none;
+        background: #3b1414;
+        clip-path: polygon(
+          50% 0,
+          61% 35%,
+          98% 35%,
+          68% 57%,
+          79% 91%,
+          50% 70%,
+          21% 91%,
+          32% 57%,
+          2% 35%,
+          39% 35%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s;
+      }
+      .star:after {
+        content: "";
+        width: 26px;
+        height: 26px;
+        background: #fffaf3;
+        clip-path: inherit;
+        transition: background 0.2s;
+      }
+      .favf input:checked ~ .star {
+        transform: rotate(72deg) scale(1.1);
+      }
+      .favf input:checked ~ .star:after {
+        background: #9f2d2d;
+      }
+      .favf input:focus-visible ~ .star {
+        outline: 3px solid #9f2d2d;
+        outline-offset: 4px;
+      }
+
+      /* Outfits */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        margin-top: 32px;
+      }
+      .outfit {
+        display: block;
+        text-decoration: none;
+        border: 2px solid #3b1414;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #fffaf3;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+        animation: rise 0.6s both;
+      }
+      .outfit:hover {
+        transform: translate(-4px, -6px) rotate(-1deg);
+        box-shadow: 6px 8px 0 #3b1414;
+      }
+      .thumb {
+        position: relative;
+        aspect-ratio: 4/5;
+        border-bottom: 2px solid #3b1414;
+      }
+      .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      .ph {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 16px;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .cstar {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        width: 38px;
+        height: 38px;
+        background: #3b1414;
+        clip-path: polygon(
+          50% 0,
+          61% 35%,
+          98% 35%,
+          68% 57%,
+          79% 91%,
+          50% 70%,
+          21% 91%,
+          32% 57%,
+          2% 35%,
+          39% 35%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cstar:after {
+        content: "";
+        width: 29px;
+        height: 29px;
+        background: #9f2d2d;
+        clip-path: inherit;
+      }
+      .info {
+        padding: 16px 18px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .info h3 {
+        font-size: 22px;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 2px solid #3b1414;
+        font-weight: 700;
+        font-size: 13px;
+        background: #ffc1cc;
+      }
+      .tag.s {
+        background: #fff0df;
+      }
+      .empty {
+        display: none;
+        text-align: center;
+        padding: 56px 16px;
+      }
+      .empty h3 {
+        font-size: 28px;
+        margin-top: 20px;
+      }
+      .empty p {
+        margin-top: 8px;
+      }
+
+      /* Add button */
+      .fab {
+        position: fixed;
+        right: 32px;
+        bottom: 32px;
+        z-index: 20;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #9f2d2d;
+        border: 2px solid #3b1414;
+        box-shadow: 5px 5px 0 #3b1414;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+      .fab:hover {
+        transform: translate(-3px, -3px) rotate(90deg);
+        box-shadow: 8px 8px 0 #3b1414;
+      }
+      .fab:before,
+      .fab:after {
+        content: "";
+        position: absolute;
+        background: #fffaf3;
+        border-radius: 2px;
+      }
+      .fab:before {
+        width: 30px;
+        height: 4px;
+      }
+      .fab:after {
+        width: 4px;
+        height: 30px;
+      }
+      .fab span {
+        position: absolute;
+        right: 88px;
+        white-space: nowrap;
+        background: #3b1414;
+        color: #fffaf3;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 14px;
+        opacity: 0;
+        transform: translateX(10px);
+        pointer-events: none;
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+      }
+      .fab:hover span,
+      .fab:focus-visible span {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Decoration */
+      .deco {
+        position: absolute;
+        border: 2px solid #3b1414;
+        pointer-events: none;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0);
+        }
+        50% {
+          transform: translateY(-16px) rotate(10deg);
+        }
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .fl {
+        animation: float 5s ease-in-out infinite;
+      }
+      .fl2 {
+        animation-duration: 7s;
+        animation-delay: -2s;
+      }
+      .sp {
+        animation: spin 24s linear infinite;
+      }
+
+      @media (max-width: 1000px) {
+        .panel.open {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .intro h1 {
+          font-size: 44px;
+        }
+      }
+      @media (max-width: 560px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .folder {
+          padding: 20px 16px;
+        }
+        .grid {
+          gap: 14px;
+        }
+        .info h3 {
+          font-size: 18px;
+        }
+        .tab {
+          padding: 0 20px;
+          font-size: 17px;
+        }
+        .panel.open {
+          grid-template-columns: 1fr;
+        }
+        .fab {
+          right: 18px;
+          bottom: 18px;
+        }
+        .deco {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap bar">
+        <a class="brand" href="../Index.html">
+          <span class="mark"
+            ><i
+              style="
+                left: 0;
+                top: 0;
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+              "
+            ></i
+            ><i
+              style="
+                right: 0;
+                bottom: 0;
+                width: 22px;
+                height: 22px;
+                background: #ffc1cc;
+                border: 2px solid #3b1414;
+                transform: rotate(12deg);
+              "
+            ></i
+          ></span>
+          <b>Closetix</b>
+        </a>
+        <a class="btn" id="btnSalir" href="login.html"
+          >Cerrar sesión</a
+        >
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="intro">
+        <div
+          class="deco fl"
+          style="
+            right: 40px;
+            top: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #9f2d2d;
+          "
+        ></div>
+        <div
+          class="deco fl fl2"
+          style="
+            right: 150px;
+            top: 90px;
+            width: 34px;
+            height: 34px;
+            background: #ffc1cc;
+            transform: rotate(20deg);
+          "
+        ></div>
+        <div
+          class="deco sp"
+          style="
+            right: 230px;
+            top: 24px;
+            width: 56px;
+            height: 56px;
+            border: 0;
+            background: #3b1414;
+            clip-path: polygon(50% 0, 100% 100%, 0 100%);
+          "
+        ></div>
+        <h1>Mis outfits</h1>
+        <p>Tus combinaciones, listas para cuando las necesites.</p>
+      </section>
+
+      <nav class="tabs" aria-label="Secciones">
+        <a class="tab" href="prendas.html">Prendas</a>
+        <a class="tab" href="outfits.html" aria-current="page"
+          >Outfits</a
+        >
+      </nav>
+
+      <section class="folder">
+        <p class="label">Ocasión</p>
+        <div class="chips" id="chips" role="group" aria-label="Ocasiones">
+          <button class="chip" type="button" data-oca="0" aria-pressed="true">
+            Todas
+          </button>
+          <button class="chip" type="button" data-oca="1" aria-pressed="false">
+            Casual
+          </button>
+          <button class="chip" type="button" data-oca="2" aria-pressed="false">
+            Trabajo
+          </button>
+          <button class="chip" type="button" data-oca="3" aria-pressed="false">
+            Formal
+          </button>
+          <button class="chip" type="button" data-oca="4" aria-pressed="false">
+            Fiesta
+          </button>
+          <button class="chip" type="button" data-oca="5" aria-pressed="false">
+            Salida de noche
+          </button>
+          <button class="chip" type="button" data-oca="6" aria-pressed="false">
+            Deporte
+          </button>
+          <button class="chip" type="button" data-oca="7" aria-pressed="false">
+            Viaje
+          </button>
+          <button class="chip" type="button" data-oca="8" aria-pressed="false">
+            Playa
+          </button>
+        </div>
+
+        <div class="tools">
+          <p class="count" id="count" aria-live="polite"></p>
+          <button
+            class="more"
+            type="button"
+            id="more"
+            aria-expanded="false"
+            aria-controls="panel"
+          >
+            Más filtros <i></i>
+          </button>
+        </div>
+
+        <div class="panel" id="panel">
+          <div>
+            <label class="t" for="buscar">Buscar por nombre</label
+            ><input id="buscar" type="text" placeholder="Ej. Look de oficina" />
+          </div>
+          <div>
+            <label class="t" for="temporada">Temporada</label>
+            <select id="temporada">
+              <option value="">Todas</option>
+              <option value="primavera">Primavera</option>
+              <option value="verano">Verano</option>
+              <option value="otono">Otoño</option>
+              <option value="invierno">Invierno</option>
+              <option value="todo-el-ano">Todo el año</option>
+            </select>
+          </div>
+          <div>
+            <label class="t" for="orden">Ordenar por</label>
+            <select id="orden">
+              <option value="nuevos">Más recientes</option>
+              <option value="viejos">Más antiguos</option>
+              <option value="nombre">Nombre (A a Z)</option>
+            </select>
+          </div>
+          <label class="favf"
+            ><input type="checkbox" id="favs" /><span class="star"></span>Solo
+            favoritos</label
+          >
+          <button class="btn" type="button" id="clear">Limpiar</button>
+        </div>
+
+        <!-- Outfits de ejemplo: reemplaza cada .ph con <img src="..."> (la ruta es preview_image_path) y genera estos bloques con PHP/JS -->
+        <div class="grid" id="grid">
+          <a
+            class="outfit"
+            href="#"
+            data-oca="2"
+            data-nombre="Look de oficina"
+            data-temporada="otono"
+            data-fav="1"
+            data-fecha="6"
+          >
+            <div class="thumb" style="background: #ffc1cc">
+              <div class="ph">[PREVIEW DEL OUTFIT]</div>
+              <span class="cstar"></span>
+            </div>
+            <div class="info">
+              <h3>Look de oficina</h3>
+              <div class="tags">
+                <span class="tag">Trabajo</span><span class="tag s">Otoño</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            class="outfit"
+            href="#"
+            data-oca="1"
+            data-nombre="Domingo de café"
+            data-temporada="primavera"
+            data-fav="0"
+            data-fecha="5"
+          >
+            <div class="thumb" style="background: #fff0df">
+              <div class="ph">[PREVIEW DEL OUTFIT]</div>
+            </div>
+            <div class="info">
+              <h3>Domingo de café</h3>
+              <div class="tags">
+                <span class="tag">Casual</span
+                ><span class="tag s">Primavera</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            class="outfit"
+            href="#"
+            data-oca="5"
+            data-nombre="Noche de baile"
+            data-temporada="todo-el-ano"
+            data-fav="1"
+            data-fecha="4"
+          >
+            <div class="thumb" style="background: #fffaf3">
+              <div class="ph">[PREVIEW DEL OUTFIT]</div>
+              <span class="cstar"></span>
+            </div>
+            <div class="info">
+              <h3>Noche de baile</h3>
+              <div class="tags">
+                <span class="tag">Salida de noche</span
+                ><span class="tag s">Todo el año</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            class="outfit"
+            href="#"
+            data-oca="8"
+            data-nombre="Día de playa"
+            data-temporada="verano"
+            data-fav="0"
+            data-fecha="3"
+          >
+            <div class="thumb" style="background: #ffc1cc">
+              <div class="ph">[PREVIEW DEL OUTFIT]</div>
+            </div>
+            <div class="info">
+              <h3>Día de playa</h3>
+              <div class="tags">
+                <span class="tag">Playa</span><span class="tag s">Verano</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            class="outfit"
+            href="#"
+            data-oca="3"
+            data-nombre="Boda de Ana"
+            data-temporada="primavera"
+            data-fav="0"
+            data-fecha="2"
+          >
+            <div class="thumb" style="background: #fffaf3">
+              <div class="ph">[PREVIEW DEL OUTFIT]</div>
+            </div>
+            <div class="info">
+              <h3>Boda de Ana</h3>
+              <div class="tags">
+                <span class="tag">Formal</span
+                ><span class="tag s">Primavera</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            class="outfit"
+            href="#"
+            data-oca="7"
+            data-nombre="Maleta para el frío"
+            data-temporada="invierno"
+            data-fav="1"
+            data-fecha="1"
+          >
+            <div class="thumb" style="background: #fff0df">
+              <div class="ph">[PREVIEW DEL OUTFIT]</div>
+              <span class="cstar"></span>
+            </div>
+            <div class="info">
+              <h3>Maleta para el frío</h3>
+              <div class="tags">
+                <span class="tag">Viaje</span
+                ><span class="tag s">Invierno</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="empty" id="empty">
+          <div style="display: flex; justify-content: center; gap: 14px">
+            <span
+              style="
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #9f2d2d;
+                border: 2px solid #3b1414;
+              "
+            ></span>
+            <span
+              style="
+                width: 40px;
+                height: 40px;
+                background: #ffc1cc;
+                border: 2px solid #3b1414;
+                transform: rotate(12deg);
+              "
+            ></span>
+            <span
+              style="
+                width: 40px;
+                height: 40px;
+                background: #3b1414;
+                clip-path: polygon(50% 0, 100% 100%, 0 100%);
+              "
+            ></span>
+          </div>
+          <h3>No encontramos outfits</h3>
+          <p>Prueba con otros filtros o crea uno nuevo.</p>
+        </div>
+      </section>
+    </main>
+
+    <a class="fab" href="closetix-crear-outfit.html" aria-label="Crear outfit"
+      ><span>Crear outfit</span></a
+    >
+
+    <script>
+      // Filtrado de demostración sobre los atributos data-*; reemplázalo por tu lógica con PHP/JS.
+      (function () {
+        var oca = 0;
+        var grid = document.getElementById("grid");
+        var items = [].slice.call(grid.querySelectorAll(".outfit"));
+        var count = document.getElementById("count");
+        var empty = document.getElementById("empty");
+        var buscar = document.getElementById("buscar");
+        var temporada = document.getElementById("temporada");
+        var orden = document.getElementById("orden");
+        var favs = document.getElementById("favs");
+
+        function apply() {
+          var q = buscar.value.trim().toLowerCase(),
+            shown = 0;
+          var sorted = items.slice().sort(function (a, b) {
+            if (orden.value === "nombre")
+              return a.dataset.nombre.localeCompare(b.dataset.nombre, "es");
+            var d = Number(b.dataset.fecha) - Number(a.dataset.fecha);
+            return orden.value === "viejos" ? -d : d;
+          });
+          sorted.forEach(function (el) {
+            var ok =
+              (oca === 0 || Number(el.dataset.oca) === oca) &&
+              (!q || el.dataset.nombre.toLowerCase().indexOf(q) > -1) &&
+              (!temporada.value || el.dataset.temporada === temporada.value) &&
+              (!favs.checked || el.dataset.fav === "1");
+            el.style.display = ok ? "" : "none";
+            if (ok) shown++;
+            grid.appendChild(el);
+          });
+          count.textContent = shown + (shown === 1 ? " outfit" : " outfits");
+          empty.style.display = shown ? "none" : "block";
+        }
+
+        document
+          .getElementById("chips")
+          .addEventListener("click", function (e) {
+            var b = e.target.closest(".chip");
+            if (!b) return;
+            oca = Number(b.dataset.oca);
+            [].forEach.call(document.querySelectorAll(".chip"), function (c) {
+              c.setAttribute("aria-pressed", c === b ? "true" : "false");
+            });
+            apply();
+          });
+
+        var more = document.getElementById("more"),
+          panel = document.getElementById("panel");
+        more.addEventListener("click", function () {
+          var open = panel.classList.toggle("open");
+          more.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        [buscar, temporada, orden, favs].forEach(function (f) {
+          f.addEventListener("input", apply);
+        });
+        document.getElementById("clear").addEventListener("click", function () {
+          buscar.value = "";
+          temporada.value = "";
+          orden.value = "nuevos";
+          favs.checked = false;
+          apply();
+        });
+
+        apply();
+      })();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../JS/sesion.js"></script>
+    <script src="../JS/auth.js"></script>
+  </body>
+</html>
