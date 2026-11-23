@@ -162,7 +162,194 @@ function borrarImagenPrenda($ruta) {
   }
 }
  
+
+// ------------------------------------------------------
+// Funciones de apoyo para los outfits
+// ------------------------------------------------------
+
+// Carpeta (relativa a la raíz del proyecto) donde se guardan las vistas previas de los outfits
+define("RUTA_OUTFITS", "IMAGES/outfits");
+
+// Valida y guarda la vista previa (PNG) que genera el lienzo. Devuelve la ruta relativa.
+function guardarPreviewOutfit() {
+  if (!isset($_FILES["preview"]) || $_FILES["preview"]["error"] !== UPLOAD_ERR_OK) {
+    responder(false, "No se recibió la vista previa del outfit (revisa el límite de subida de PHP).");
+  }
+  if ($_FILES["preview"]["size"] > 3 * 1024 * 1024) {
+    responder(false, "La vista previa es demasiado pesada.");
+  }
+
+  $finfo = finfo_open(FILEINFO_MIME_TYPE);
+  $mime  = finfo_file($finfo, $_FILES["preview"]["tmp_name"]);
+  finfo_close($finfo);
+  if ($mime !== "image/png") {
+    responder(false, "La vista previa debe ser un PNG.");
+  }
+
+  $carpeta = dirname(__DIR__) . "/../" . RUTA_OUTFITS;
+  if (!is_dir($carpeta) && !mkdir($carpeta, 0755, true)) {
+    responder(false, "No se pudo preparar la carpeta de vistas previas.");
+  }
+
+  $archivo = bin2hex(random_bytes(16)) . ".png";
+  if (!move_uploaded_file($_FILES["preview"]["tmp_name"], $carpeta . "/" . $archivo)) {
+    responder(false, "No se pudo guardar la vista previa.");
+  }
+
+  return RUTA_OUTFITS . "/" . $archivo;
+}
+
+function borrarPreviewOutfit($ruta) {
+  if (!$ruta) return;
+  $archivo = dirname(__DIR__) . "/../" . RUTA_OUTFITS . "/" . basename($ruta);
+  if (is_file($archivo)) {
+    unlink($archivo);
+  }
+}
+
+// Convierte un valor a número y comprueba que esté dentro de un rango
+function numeroEnRango($valor, $min, $max) {
+  if (!is_numeric($valor) || $valor < $min || $valor > $max) {
+    responder(false, "Los datos del lienzo no son válidos.");
+  }
+  return (float)$valor;
+}
  
+
+// ------------------------------------------------------
+// Funciones de apoyo para leer y guardar outfits
+// ------------------------------------------------------
+
+// Lee y valida lo que manda la página (sirve para agregar y para editar)
+function leerDatosOutfit($con, $idUsuario) {
+  $nombre      = trim($_POST["nombre"] ?? "");
+  $idOcasion   = (int)($_POST["ocasion"] ?? 0);
+  $temporadaIn = $_POST["temporada"] ?? "";
+  $notas       = mb_substr(trim($_POST["notas"] ?? ""), 0, 1000);
+  $favorito    = isset($_POST["favorita"]) ? 1 : 0;
+  $ancho       = (int)($_POST["canvas_width"] ?? 800);
+  $alto        = (int)($_POST["canvas_height"] ?? 1000);
+
+  $temporadas = temporadasBD();
+
+  if ($nombre === "" || mb_strlen($nombre) > 100) {
+    responder(false, "Escribe el nombre del outfit (máximo 100 caracteres).");
+  }
+  if (!isset($temporadas[$temporadaIn])) {
+    responder(false, "Elige una temporada válida.");
+  }
+  if ($ancho < 200 || $ancho > 4000 || $alto < 200 || $alto > 4000) {
+    responder(false, "El tamaño del lienzo no es válido.");
+  }
+
+  $select = $con->select("occasions", "id");
+  $select->where("id", "=", $idOcasion);
+  if (!count($select->execute())) {
+    responder(false, "Elige una ocasión válida.");
+  }
+
+  $items = json_decode($_POST["items"] ?? "[]", true);
+  if (!is_array($items) || count($items) < 1) {
+    responder(false, "Agrega al menos una prenda al lienzo.");
+  }
+  if (count($items) > 30) {
+    responder(false, "Un outfit puede tener máximo 30 prendas.");
+  }
+
+  // Las prendas deben ser de este usuario
+  $select = $con->select("clothing_items", "id");
+  $select->where("user_id", "=", $idUsuario);
+  $mias = array();
+  foreach ($select->execute() as $fila) {
+    $mias[(int)$fila["id"]] = true;
+  }
+
+  $limpios = array();
+  $usadas  = array();
+  foreach ($items as $it) {
+    if (!is_array($it)) {
+      responder(false, "Los datos del lienzo no son válidos.");
+    }
+    $idPrenda = (int)($it["prenda"] ?? 0);
+    if (!isset($mias[$idPrenda])) {
+      responder(false, "Una de las prendas no es válida.");
+    }
+    if (isset($usadas[$idPrenda])) {
+      responder(false, "No repitas la misma prenda en un outfit.");
+    }
+    $usadas[$idPrenda] = true;
+
+    $limpios[] = array(
+      "prenda" => $idPrenda,
+      "x"      => numeroEnRango($it["x"] ?? null, -5000, 5000),
+      "y"      => numeroEnRango($it["y"] ?? null, -5000, 5000),
+      "sx"     => numeroEnRango($it["sx"] ?? null, 0.01, 50),
+      "sy"     => numeroEnRango($it["sy"] ?? null, 0.01, 50),
+      "angle"  => numeroEnRango($it["angle"] ?? null, 0, 360),
+      "z"      => (int)numeroEnRango($it["z"] ?? null, 0, 255)
+    );
+  }
+
+  return array(
+    "nombre"    => $nombre,
+    "ocasion"   => $idOcasion,
+    "temporada" => $temporadas[$temporadaIn],
+    "notas"     => $notas,
+    "favorito"  => $favorito,
+    "ancho"     => $ancho,
+    "alto"      => $alto,
+    "items"     => $limpios
+  );
+}
+
+function insertarItemsOutfit($con, $idOutfit, $items) {
+  foreach ($items as $l) {
+    $insert = $con->insert("outfit_items", "outfit_id, clothing_item_id, pos_x, pos_y, scale_x, scale_y, angle, z_index");
+    $insert->value($idOutfit);
+    $insert->value($l["prenda"]);
+    $insert->value($l["x"]);
+    $insert->value($l["y"]);
+    $insert->value($l["sx"]);
+    $insert->value($l["sy"]);
+    $insert->value($l["angle"]);
+    $insert->value($l["z"]);
+    $insert->execute();
+  }
+}
+
+// Ids de las filas de outfit_items de un outfit
+function idsItemsOutfit($con, $idOutfit) {
+  $select = $con->select("outfit_items", "id");
+  $select->where("outfit_id", "=", $idOutfit);
+  $ids = array();
+  foreach ($select->execute() as $fila) {
+    $ids[] = (int)$fila["id"];
+  }
+  return $ids;
+}
+
+function borrarItemsOutfit($con, $ids) {
+  foreach ($ids as $id) {
+    $delete = $con->delete("outfit_items");
+    $delete->where("id", "=", (int)$id);
+    $delete->execute();
+  }
+}
+
+// Borra un outfit y todas sus prendas (se usa para deshacer un guardado a medias)
+function borrarOutfitCompleto($con, $idOutfit) {
+  try {
+    $delete = $con->delete("outfit_items");
+    $delete->where("outfit_id", "=", (int)$idOutfit);
+    $delete->execute();
+
+    $delete = $con->delete("outfits");
+    $delete->where("id", "=", (int)$idOutfit);
+    $delete->execute();
+  } catch (Exception $e) {
+  }
+}
+
 // ------------------------------------------------------
 // REGISTRO
 // ------------------------------------------------------
@@ -476,6 +663,365 @@ elseif (isset($_GET["editarPrenda"])) {
   }
  
   responder(true, "Prenda actualizada.");
+}
+
+// ------------------------------------------------------
+// OUTFITS: agregar
+// ------------------------------------------------------
+elseif (isset($_GET["agregarOutfit"])) {
+
+  if (!isset($_SESSION["user_id"])) {
+    responder(false, "Debes iniciar sesión.");
+  }
+  $idUsuario = (int)$_SESSION["user_id"];
+
+  // ----- Datos del outfit -----
+  $nombre      = trim($_POST["nombre"] ?? "");
+  $idOcasion   = (int)($_POST["ocasion"] ?? 0);
+  $temporadaIn = $_POST["temporada"] ?? "";
+  $notas       = mb_substr(trim($_POST["notas"] ?? ""), 0, 1000);
+  $favorito    = isset($_POST["favorita"]) ? 1 : 0;
+  $ancho       = (int)($_POST["canvas_width"] ?? 800);
+  $alto        = (int)($_POST["canvas_height"] ?? 1000);
+
+  $temporadas = temporadasBD();
+
+  if ($nombre === "" || mb_strlen($nombre) > 100) {
+    responder(false, "Escribe el nombre del outfit (máximo 100 caracteres).");
+  }
+  if (!isset($temporadas[$temporadaIn])) {
+    responder(false, "Elige una temporada válida.");
+  }
+  if ($ancho < 200 || $ancho > 4000 || $alto < 200 || $alto > 4000) {
+    responder(false, "El tamaño del lienzo no es válido.");
+  }
+
+  $select = $con->select("occasions", "id");
+  $select->where("id", "=", $idOcasion);
+  if (!count($select->execute())) {
+    responder(false, "Elige una ocasión válida.");
+  }
+
+  // ----- Prendas del lienzo -----
+  $items = json_decode($_POST["items"] ?? "[]", true);
+  if (!is_array($items) || count($items) < 1) {
+    responder(false, "Agrega al menos una prenda al lienzo.");
+  }
+  if (count($items) > 30) {
+    responder(false, "Un outfit puede tener máximo 30 prendas.");
+  }
+
+  // Las prendas deben ser de este usuario
+  $select = $con->select("clothing_items", "id");
+  $select->where("user_id", "=", $idUsuario);
+  $mias = array();
+  foreach ($select->execute() as $fila) {
+    $mias[(int)$fila["id"]] = true;
+  }
+
+  $limpios = array();
+  $usadas  = array();
+  foreach ($items as $it) {
+    if (!is_array($it)) {
+      responder(false, "Los datos del lienzo no son válidos.");
+    }
+    $idPrenda = (int)($it["prenda"] ?? 0);
+    if (!isset($mias[$idPrenda])) {
+      responder(false, "Una de las prendas no es válida.");
+    }
+    if (isset($usadas[$idPrenda])) {
+      responder(false, "No repitas la misma prenda en un outfit.");
+    }
+    $usadas[$idPrenda] = true;
+
+    $limpios[] = array(
+      "prenda" => $idPrenda,
+      "x"      => numeroEnRango($it["x"] ?? null, -5000, 5000),
+      "y"      => numeroEnRango($it["y"] ?? null, -5000, 5000),
+      "sx"     => numeroEnRango($it["sx"] ?? null, 0.01, 50),
+      "sy"     => numeroEnRango($it["sy"] ?? null, 0.01, 50),
+      "angle"  => numeroEnRango($it["angle"] ?? null, 0, 360),
+      "z"      => (int)numeroEnRango($it["z"] ?? null, 0, 255)
+    );
+  }
+
+  // ----- Vista previa -----
+  $rutaPreview = guardarPreviewOutfit();
+
+  // ----- Insertar el outfit -----
+  try {
+    $insert = $con->insert("outfits", "user_id, occasion_id, name, season, notes, is_favorite, canvas_width, canvas_height, preview_image_path");
+    $insert->value($idUsuario);
+    $insert->value($idOcasion);
+    $insert->value($nombre);
+    $insert->value($temporadas[$temporadaIn]);
+    $insert->value($notas);
+    $insert->value($favorito);
+    $insert->value($ancho);
+    $insert->value($alto);
+    $insert->value($rutaPreview);
+    $insert->execute();
+
+    $idOutfit = $con->lastInsertId();
+  } catch (Exception $e) {
+    borrarPreviewOutfit($rutaPreview);
+    responder(false, "No se pudo guardar el outfit.");
+  }
+
+  if (!is_numeric($idOutfit) || $idOutfit <= 0) {
+    borrarPreviewOutfit($rutaPreview);
+    responder(false, "No se pudo guardar el outfit.");
+  }
+
+  // ----- Insertar sus prendas -----
+  try {
+    foreach ($limpios as $l) {
+      $insert = $con->insert("outfit_items", "outfit_id, clothing_item_id, pos_x, pos_y, scale_x, scale_y, angle, z_index");
+      $insert->value((int)$idOutfit);
+      $insert->value($l["prenda"]);
+      $insert->value($l["x"]);
+      $insert->value($l["y"]);
+      $insert->value($l["sx"]);
+      $insert->value($l["sy"]);
+      $insert->value($l["angle"]);
+      $insert->value($l["z"]);
+      $insert->execute();
+    }
+  } catch (Exception $e) {
+    // Si algo falla a medias, se deshace lo que se alcanzó a guardar
+    try {
+      $delete = $con->delete("outfit_items");
+      $delete->where("outfit_id", "=", (int)$idOutfit);
+      $delete->execute();
+
+      $delete = $con->delete("outfits");
+      $delete->where("id", "=", (int)$idOutfit);
+      $delete->execute();
+    } catch (Exception $e2) {
+    }
+    borrarPreviewOutfit($rutaPreview);
+    responder(false, "No se pudo guardar el outfit.");
+  }
+
+  responder(true, "Outfit guardado.", array("id" => (int)$idOutfit));
+}
+
+
+
+// ------------------------------------------------------
+// OUTFITS: listar (solo los del usuario con sesión)
+// ------------------------------------------------------
+elseif (isset($_GET["outfits"])) {
+
+  if (!isset($_SESSION["user_id"])) {
+    responder(false, "Debes iniciar sesión.");
+  }
+  $idUsuario = (int)$_SESSION["user_id"];
+
+  // Filtros opcionales
+  $idOcasion   = (int)($_POST["ocasion"] ?? 0);        // 0 = todas
+  $buscar      = trim($_POST["buscar"] ?? "");
+  $temporadaIn = $_POST["temporada"] ?? "";
+  $soloFavs    = ($_POST["favoritos"] ?? "") === "1";
+  $orden       = $_POST["orden"] ?? "nuevos";
+
+  $temporadas = temporadasBD();
+  $ordenes = array("nuevos" => "id DESC", "viejos" => "id ASC", "nombre" => "name ASC");
+  if (!isset($ordenes[$orden])) {
+    $orden = "nuevos";
+  }
+
+  $select = $con->select("outfits", "id, occasion_id, name, season, preview_image_path, is_favorite");
+  $select->where("user_id", "=", $idUsuario);
+
+  if ($idOcasion > 0) {
+    $select->where_and("occasion_id", "=", $idOcasion);
+  }
+  if ($temporadaIn !== "") {
+    if (!isset($temporadas[$temporadaIn])) {
+      responder(false, "Temporada no válida.");
+    }
+    $select->where_and("season", "=", $temporadas[$temporadaIn]);
+  }
+  if ($soloFavs) {
+    $select->where_and("is_favorite", "=", 1);
+  }
+  $select->orderby($ordenes[$orden]);
+
+  $filas = $select->execute();
+
+  // El nombre se filtra aquí para aceptar coincidencias parciales
+  if ($buscar !== "") {
+    $filas = array_values(array_filter($filas, function ($fila) use ($buscar) {
+      return mb_stripos((string)$fila["name"], $buscar) !== false;
+    }));
+  }
+
+  // Nombres de las ocasiones
+  $nombresOcasion = array();
+  $select = $con->select("occasions", "id, name");
+  foreach ($select->execute() as $fila) {
+    $nombresOcasion[(int)$fila["id"]] = $fila["name"];
+  }
+
+  $temporadaForm = array_flip($temporadas);   // "Otoño" -> "otono"
+
+  $outfits = array();
+  foreach ($filas as $fila) {
+    $outfits[] = array(
+      "id"             => (int)$fila["id"],
+      "nombre"         => $fila["name"],
+      "ocasion"        => (int)$fila["occasion_id"],
+      "ocasion_nombre" => $nombresOcasion[(int)$fila["occasion_id"]] ?? "",
+      "temporada"      => $temporadaForm[$fila["season"]] ?? "",
+      "imagen"         => $fila["preview_image_path"],
+      "es_favorito"    => (int)$fila["is_favorite"]
+    );
+  }
+
+  responder(true, "", array("outfits" => $outfits));
+}
+
+
+// ------------------------------------------------------
+// OUTFITS: detalle (datos + prendas con su posición)
+// ------------------------------------------------------
+elseif (isset($_GET["outfit"])) {
+
+  if (!isset($_SESSION["user_id"])) {
+    responder(false, "Debes iniciar sesión.");
+  }
+  $idUsuario = (int)$_SESSION["user_id"];
+  $idOutfit  = (int)($_POST["id"] ?? 0);
+
+  // Se filtra por id Y por usuario
+  $select = $con->select("outfits", "id, occasion_id, name, season, notes, is_favorite, canvas_width, canvas_height");
+  $select->where("id", "=", $idOutfit);
+  $select->where_and("user_id", "=", $idUsuario);
+  $filas = $select->execute();
+
+  if (!count($filas)) {
+    responder(false, "No encontramos ese outfit.");
+  }
+  $o = $filas[0];
+
+  // Prendas del outfit, de la más al fondo a la más al frente
+  $select = $con->select("outfit_items", "clothing_item_id, pos_x, pos_y, scale_x, scale_y, angle, z_index");
+  $select->where("outfit_id", "=", $idOutfit);
+  $select->orderby("z_index ASC");
+  $filasItems = $select->execute();
+
+  // Imagen y nombre de cada prenda (solo prendas del usuario)
+  $select = $con->select("clothing_items", "id, name, image_path");
+  $select->where("user_id", "=", $idUsuario);
+  $prendas = array();
+  foreach ($select->execute() as $fila) {
+    $prendas[(int)$fila["id"]] = $fila;
+  }
+
+  $items = array();
+  foreach ($filasItems as $it) {
+    $idPrenda = (int)$it["clothing_item_id"];
+    if (!isset($prendas[$idPrenda])) {
+      continue;   // la prenda ya no existe
+    }
+    $items[] = array(
+      "prenda" => $idPrenda,
+      "nombre" => $prendas[$idPrenda]["name"],
+      "imagen" => $prendas[$idPrenda]["image_path"],
+      "x"      => (float)$it["pos_x"],
+      "y"      => (float)$it["pos_y"],
+      "sx"     => (float)$it["scale_x"],
+      "sy"     => (float)$it["scale_y"],
+      "angle"  => (float)$it["angle"],
+      "z"      => (int)$it["z_index"]
+    );
+  }
+
+  $temporadaForm = array_flip(temporadasBD());
+
+  responder(true, "", array("outfit" => array(
+    "id"            => (int)$o["id"],
+    "nombre"        => $o["name"],
+    "ocasion"       => (int)$o["occasion_id"],
+    "temporada"     => $temporadaForm[$o["season"]] ?? "",
+    "notas"         => $o["notes"],
+    "es_favorito"   => (int)$o["is_favorite"],
+    "canvas_width"  => (int)$o["canvas_width"],
+    "canvas_height" => (int)$o["canvas_height"],
+    "items"         => $items
+  )));
+}
+
+
+// ------------------------------------------------------
+// OUTFITS: editar
+// ------------------------------------------------------
+elseif (isset($_GET["editarOutfit"])) {
+
+  if (!isset($_SESSION["user_id"])) {
+    responder(false, "Debes iniciar sesión.");
+  }
+  $idUsuario = (int)$_SESSION["user_id"];
+  $idOutfit  = (int)($_POST["id"] ?? 0);
+
+  // El outfit debe existir y ser de este usuario
+  $select = $con->select("outfits", "id, preview_image_path");
+  $select->where("id", "=", $idOutfit);
+  $select->where_and("user_id", "=", $idUsuario);
+  $filas = $select->execute();
+
+  if (!count($filas)) {
+    responder(false, "No encontramos ese outfit.");
+  }
+  $rutaVieja = $filas[0]["preview_image_path"];
+
+  $d = leerDatosOutfit($con, $idUsuario);
+  $rutaNueva = guardarPreviewOutfit();
+
+  // Primero se agregan las prendas nuevas y solo después se quitan las viejas:
+  // si algo falla a medias, el outfit original sigue intacto.
+  $idsViejos = idsItemsOutfit($con, $idOutfit);
+
+  $deshacer = function () use ($con, $idOutfit, $idsViejos, $rutaNueva) {
+    try {
+      $nuevos = array_diff(idsItemsOutfit($con, $idOutfit), $idsViejos);
+      borrarItemsOutfit($con, $nuevos);
+    } catch (Exception $e) {
+    }
+    borrarPreviewOutfit($rutaNueva);
+  };
+
+  try {
+    insertarItemsOutfit($con, $idOutfit, $d["items"]);
+  } catch (Exception $e) {
+    $deshacer();
+    responder(false, "No se pudo actualizar el outfit.");
+  }
+
+  try {
+    $update = $con->update("outfits");
+    $update->set("occasion_id", $d["ocasion"]);
+    $update->set("name", $d["nombre"]);
+    $update->set("season", $d["temporada"]);
+    $update->set("notes", $d["notas"]);
+    $update->set("is_favorite", $d["favorito"]);
+    $update->set("canvas_width", $d["ancho"]);
+    $update->set("canvas_height", $d["alto"]);
+    $update->set("preview_image_path", $rutaNueva);
+    $update->where("id", "=", $idOutfit);
+    $update->where_and("user_id", "=", $idUsuario);
+    $update->execute();
+  } catch (Exception $e) {
+    $deshacer();
+    responder(false, "No se pudo actualizar el outfit.");
+  }
+
+  // Todo salió bien: ahora sí se eliminan lo anterior
+  borrarItemsOutfit($con, $idsViejos);
+  borrarPreviewOutfit($rutaVieja);
+
+  responder(true, "Outfit actualizado.");
 }
 ?>
 

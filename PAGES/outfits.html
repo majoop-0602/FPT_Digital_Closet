@@ -758,135 +758,8 @@
           <button class="btn" type="button" id="clear">Limpiar</button>
         </div>
 
-        <!-- Outfits de ejemplo: reemplaza cada .ph con <img src="..."> (la ruta es preview_image_path) y genera estos bloques con PHP/JS -->
-        <div class="grid" id="grid">
-          <a
-            class="outfit"
-            href="#"
-            data-oca="2"
-            data-nombre="Look de oficina"
-            data-temporada="otono"
-            data-fav="1"
-            data-fecha="6"
-          >
-            <div class="thumb" style="background: #ffc1cc">
-              <div class="ph">[PREVIEW DEL OUTFIT]</div>
-              <span class="cstar"></span>
-            </div>
-            <div class="info">
-              <h3>Look de oficina</h3>
-              <div class="tags">
-                <span class="tag">Trabajo</span><span class="tag s">Otoño</span>
-              </div>
-            </div>
-          </a>
-
-          <a
-            class="outfit"
-            href="#"
-            data-oca="1"
-            data-nombre="Domingo de café"
-            data-temporada="primavera"
-            data-fav="0"
-            data-fecha="5"
-          >
-            <div class="thumb" style="background: #fff0df">
-              <div class="ph">[PREVIEW DEL OUTFIT]</div>
-            </div>
-            <div class="info">
-              <h3>Domingo de café</h3>
-              <div class="tags">
-                <span class="tag">Casual</span
-                ><span class="tag s">Primavera</span>
-              </div>
-            </div>
-          </a>
-
-          <a
-            class="outfit"
-            href="#"
-            data-oca="5"
-            data-nombre="Noche de baile"
-            data-temporada="todo-el-ano"
-            data-fav="1"
-            data-fecha="4"
-          >
-            <div class="thumb" style="background: #fffaf3">
-              <div class="ph">[PREVIEW DEL OUTFIT]</div>
-              <span class="cstar"></span>
-            </div>
-            <div class="info">
-              <h3>Noche de baile</h3>
-              <div class="tags">
-                <span class="tag">Salida de noche</span
-                ><span class="tag s">Todo el año</span>
-              </div>
-            </div>
-          </a>
-
-          <a
-            class="outfit"
-            href="#"
-            data-oca="8"
-            data-nombre="Día de playa"
-            data-temporada="verano"
-            data-fav="0"
-            data-fecha="3"
-          >
-            <div class="thumb" style="background: #ffc1cc">
-              <div class="ph">[PREVIEW DEL OUTFIT]</div>
-            </div>
-            <div class="info">
-              <h3>Día de playa</h3>
-              <div class="tags">
-                <span class="tag">Playa</span><span class="tag s">Verano</span>
-              </div>
-            </div>
-          </a>
-
-          <a
-            class="outfit"
-            href="#"
-            data-oca="3"
-            data-nombre="Boda de Ana"
-            data-temporada="primavera"
-            data-fav="0"
-            data-fecha="2"
-          >
-            <div class="thumb" style="background: #fffaf3">
-              <div class="ph">[PREVIEW DEL OUTFIT]</div>
-            </div>
-            <div class="info">
-              <h3>Boda de Ana</h3>
-              <div class="tags">
-                <span class="tag">Formal</span
-                ><span class="tag s">Primavera</span>
-              </div>
-            </div>
-          </a>
-
-          <a
-            class="outfit"
-            href="#"
-            data-oca="7"
-            data-nombre="Maleta para el frío"
-            data-temporada="invierno"
-            data-fav="1"
-            data-fecha="1"
-          >
-            <div class="thumb" style="background: #fff0df">
-              <div class="ph">[PREVIEW DEL OUTFIT]</div>
-              <span class="cstar"></span>
-            </div>
-            <div class="info">
-              <h3>Maleta para el frío</h3>
-              <div class="tags">
-                <span class="tag">Viaje</span
-                ><span class="tag s">Invierno</span>
-              </div>
-            </div>
-          </a>
-        </div>
+        <!-- Los outfits se dibujan desde js/outfits.js -->
+        <div class="grid" id="grid" aria-live="polite"></div>
 
         <div class="empty" id="empty">
           <div style="display: flex; justify-content: center; gap: 14px">
@@ -923,81 +796,13 @@
       </section>
     </main>
 
-    <a class="fab" href="closetix-crear-outfit.html" aria-label="Crear outfit"
+    <a class="fab" href="subir-outfits.html" aria-label="Crear outfit"
       ><span>Crear outfit</span></a
     >
 
-    <script>
-      // Filtrado de demostración sobre los atributos data-*; reemplázalo por tu lógica con PHP/JS.
-      (function () {
-        var oca = 0;
-        var grid = document.getElementById("grid");
-        var items = [].slice.call(grid.querySelectorAll(".outfit"));
-        var count = document.getElementById("count");
-        var empty = document.getElementById("empty");
-        var buscar = document.getElementById("buscar");
-        var temporada = document.getElementById("temporada");
-        var orden = document.getElementById("orden");
-        var favs = document.getElementById("favs");
-
-        function apply() {
-          var q = buscar.value.trim().toLowerCase(),
-            shown = 0;
-          var sorted = items.slice().sort(function (a, b) {
-            if (orden.value === "nombre")
-              return a.dataset.nombre.localeCompare(b.dataset.nombre, "es");
-            var d = Number(b.dataset.fecha) - Number(a.dataset.fecha);
-            return orden.value === "viejos" ? -d : d;
-          });
-          sorted.forEach(function (el) {
-            var ok =
-              (oca === 0 || Number(el.dataset.oca) === oca) &&
-              (!q || el.dataset.nombre.toLowerCase().indexOf(q) > -1) &&
-              (!temporada.value || el.dataset.temporada === temporada.value) &&
-              (!favs.checked || el.dataset.fav === "1");
-            el.style.display = ok ? "" : "none";
-            if (ok) shown++;
-            grid.appendChild(el);
-          });
-          count.textContent = shown + (shown === 1 ? " outfit" : " outfits");
-          empty.style.display = shown ? "none" : "block";
-        }
-
-        document
-          .getElementById("chips")
-          .addEventListener("click", function (e) {
-            var b = e.target.closest(".chip");
-            if (!b) return;
-            oca = Number(b.dataset.oca);
-            [].forEach.call(document.querySelectorAll(".chip"), function (c) {
-              c.setAttribute("aria-pressed", c === b ? "true" : "false");
-            });
-            apply();
-          });
-
-        var more = document.getElementById("more"),
-          panel = document.getElementById("panel");
-        more.addEventListener("click", function () {
-          var open = panel.classList.toggle("open");
-          more.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-
-        [buscar, temporada, orden, favs].forEach(function (f) {
-          f.addEventListener("input", apply);
-        });
-        document.getElementById("clear").addEventListener("click", function () {
-          buscar.value = "";
-          temporada.value = "";
-          orden.value = "nuevos";
-          favs.checked = false;
-          apply();
-        });
-
-        apply();
-      })();
-    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../JS/sesion.js"></script>
     <script src="../JS/auth.js"></script>
+    <script src="../JS/outfits.js"></script>
   </body>
 </html>
